@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Business Time</title>
-  <!-- PWA manifest and icon -->
+  <!-- PWA manifest ve ikon -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png">
-  <!-- Chart.js CDN -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -61,13 +61,11 @@
       opacity: 0.7;
       display: none;
     }
-    /* Main container */
     .container {
       flex: 1;
       padding: 2vw 5vw;
       overflow-y: auto;
     }
-    /* Input groups */
     .input-group {
       max-width: 500px;
       margin: 2vw auto;
@@ -91,7 +89,6 @@
       display: flex;
       gap: 2vw;
     }
-    /* Buttons */
     .buttons {
       max-width: 500px;
       margin: 2vw auto;
@@ -114,7 +111,6 @@
     .stop-btn  { background: #ea4335; color: white; }
     .reset-btn { background: #fbbc04; color: white; }
     .dark-toggle { background: var(--accent); color: white; }
-    /* Earnings box */
     .earnings-box {
       max-width: 500px;
       margin: 3vw auto;
@@ -126,7 +122,6 @@
       border-radius: 2vw;
       color: var(--gold);
     }
-    /* Summary (time and overtime) */
     .summary {
       max-width: 500px;
       margin: 2vw auto 6vw;
@@ -134,7 +129,6 @@
       text-align: center;
       color: var(--text);
     }
-    /* Chart container */
     .chart-container {
       max-width: 500px;
       margin: 2vw auto;
@@ -143,7 +137,6 @@
       width: 100% !important;
       height: auto !important;
     }
-    /* Nav bar */
     .nav {
       display: flex;
       justify-content: space-around;
@@ -164,9 +157,7 @@
     .nav-icon {
       font-size: 8vw;
     }
-    /* Hidden */
     .hidden { display: none; }
-    /* Profile view */
     #profileView input,
     #profileView textarea {
       width: 100%;
@@ -200,7 +191,6 @@
     #jobLinks a:hover {
       text-decoration: underline;
     }
-    /* Settings view */
     #settingsView label {
       display: block;
       margin-bottom: 1vw;
@@ -250,7 +240,7 @@
 
   <!-- Container -->
   <div class="container">
-    <!-- Main View -->
+    <!-- Ana Sayfa -->
     <main id="mainView">
       <div class="input-group">
         <label for="salary">Maaş Bilgisi (TL)</label>
@@ -270,7 +260,7 @@
       <div class="buttons">
         <button class="start-btn" onclick="startTracking()">BAŞLAT</button>
         <button class="stop-btn"  onclick="stopTracking()">DURDUR</button>
-        <button class="reset-btn" onclick="resetDaily()">SIFIRLA (Günlük)</button>
+        <button class="reset-btn" onclick="confirmDailyReset()">SIFIRLA (Günlük)</button>
         <button class="dark-toggle" onclick="toggleDarkMode()">GECE MODU</button>
       </div>
       <div class="earnings-box" id="earnings">0,00 TL</div>
@@ -288,7 +278,7 @@
       </div>
     </main>
 
-    <!-- Profile View -->
+    <!-- Profil -->
     <main id="profileView" class="hidden">
       <h2>Profil</h2>
       <input type="file" id="photoUpload" accept="image/*" style="margin-bottom:2vw;">
@@ -298,7 +288,7 @@
       <div id="jobLinks"></div>
     </main>
 
-    <!-- Settings View -->
+    <!-- Ayarlar -->
     <main id="settingsView" class="hidden">
       <h2>Ayarlar</h2>
       <label for="currency">Döviz Cinsi</label>
@@ -317,11 +307,11 @@
         <option value="light">Aydınlık</option>
         <option value="dark">Koyu</option>
       </select>
-      <button onclick="resetAll()">Tüm Verileri Sıfırla</button>
+      <button onclick="confirmAllReset()">Tüm Verileri Sıfırla</button>
     </main>
   </div>
 
-  <!-- Nav Bar -->
+  <!-- Alt Menü -->
   <nav class="nav">
     <button onclick="showView('main')">
       <span class="nav-icon">🏠</span>
@@ -337,7 +327,7 @@
     </button>
   </nav>
 
-  <!-- Audio Effects -->
+  <!-- Ses Efektleri (Base64 yer tutucu) -->
   <audio id="startSound">
     <source src="data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAA..." type="audio/mp3">
   </audio>
@@ -346,7 +336,7 @@
   </audio>
 
   <script>
-    // Variables
+    // Değişkenler
     let timer;
     let startTimestamp = parseInt(localStorage.getItem('startTimestamp')) || null;
     let accumulatedSeconds = parseInt(localStorage.getItem('accumulatedSeconds')) || 0;
@@ -358,14 +348,13 @@
     let earnings = parseFloat(localStorage.getItem('earnings')) || 0;
     let name = localStorage.getItem('username');
 
-    // Profile Photo Handling
+    // Profil Fotoğrafı
     const photoUpload = document.getElementById('photoUpload');
     const profilePhoto = document.getElementById('profilePhoto');
     if (localStorage.getItem('profilePhoto')) {
       profilePhoto.src = localStorage.getItem('profilePhoto');
       profilePhoto.style.display = 'block';
     }
-
     photoUpload.onchange = e => {
       const file = e.target.files[0];
       if (!file) return;
@@ -378,7 +367,7 @@
       reader.readAsDataURL(file);
     };
 
-    // Ask for name
+    // İsim İsteme
     if (!name) {
       name = prompt("Hoş geldiniz! Lütfen adınızı ve soyadınızı girin:");
       if (name) localStorage.setItem('username', name);
@@ -386,7 +375,7 @@
     document.getElementById('displayName').innerText = name || '';
     document.getElementById('displayName').style.display = 'block';
 
-    // Element references
+    // Eleman referansları
     const salaryInput       = document.getElementById('salary');
     const extraHoursInput   = document.getElementById('extraHours');
     const extraMinutesInput = document.getElementById('extraMinutes');
@@ -399,7 +388,7 @@
     const themeSelect       = document.getElementById('themeSelect');
     const chartRangeSelect  = document.getElementById('chartRange');
 
-    // Load saved values
+    // Kayıtlı değerleri yükle
     salaryInput.value       = localStorage.getItem('salary') || '';
     extraHoursInput.value   = localStorage.getItem('extraHours') || 0;
     extraMinutesInput.value = localStorage.getItem('extraMinutes') || 0;
@@ -411,7 +400,7 @@
     overtimeInput.value     = overtimeMultiplier;
     themeSelect.value       = localStorage.getItem('theme') || 'auto';
 
-    // Theme handling
+    // Tema Uygulama
     function applyTheme() {
       const saved = localStorage.getItem('theme');
       if (saved === 'light') document.body.classList.remove('dark');
@@ -428,7 +417,7 @@
     };
     applyTheme();
 
-    // Save inputs on change
+    // Input değişimlerini kaydet
     salaryInput.onchange       = () => localStorage.setItem('salary', salaryInput.value);
     extraHoursInput.onchange   = () => localStorage.setItem('extraHours', extraHoursInput.value);
     extraMinutesInput.onchange = () => localStorage.setItem('extraMinutes', extraMinutesInput.value);
@@ -462,7 +451,7 @@
     const startSound = document.getElementById('startSound');
     const stopSound  = document.getElementById('stopSound');
 
-    // Helper: current total seconds
+    // Yardımcı: geçerli toplam saniyeyi al
     function getCurrentSeconds() {
       if (isRunning && startTimestamp) {
         const now = Math.floor(Date.now() / 1000);
@@ -480,6 +469,17 @@
       return +(totalSec * ratePerSec).toFixed(2);
     }
 
+    // Günlük hedef kontrolü (her gün sadece bir kez)
+    function checkDailyGoal(totalSec) {
+      const todayKey = new Date().toISOString().split('T')[0];
+      const alreadyNotified = localStorage.getItem('goalCongrats_' + todayKey);
+      const hours = totalSec / 3600;
+      if (hours >= goal && !alreadyNotified) {
+        alert('🎉 Tebrikler! Günlük hedefi aştınız.');
+        localStorage.setItem('goalCongrats_' + todayKey, 'true');
+      }
+    }
+
     function updateDisplay() {
       const totalSec = getCurrentSeconds();
       const earned = calculateEarnings(totalSec);
@@ -487,10 +487,11 @@
       document.getElementById('timeDisplay').innerText = `Toplam Süre: ${(totalSec / 3600).toFixed(1)}s`;
       const extraTime = totalSec > 180 * 3600 ? (totalSec - 180 * 3600) : 0;
       document.getElementById('overtimeDisplay').innerText = `Fazla Mesai: ${(extraTime / 3600).toFixed(1)}s`;
+
+      checkDailyGoal(totalSec);
     }
 
     function startTracking() {
-      console.log("🚀 startTracking çağrıldı");
       if (isRunning) return;
       const salary = parseFloat(salaryInput.value);
       if (isNaN(salary) || salary <= 0) {
@@ -499,7 +500,8 @@
       }
       startSound.currentTime = 0;
       startSound.play().catch(()=>{});
-      const extraSec = ((+extraHoursInput.value || 0) * 3600) + ((+extraMinutesInput.value || 0) * 60);
+      const extraSec = ((+extraHoursInput.value || 0) * 3600) +
+                       ((+extraMinutesInput.value || 0) * 60);
       const prevSec = getCurrentSeconds();
       accumulatedSeconds = prevSec + extraSec;
       earnings = calculateEarnings(accumulatedSeconds);
@@ -516,12 +518,10 @@
         localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
         localStorage.setItem('earnings', earnings);
         updateDisplay();
-        if ((accumulatedSeconds / 3600) >= goal) showCongrats();
       }, 1000);
     }
 
     function stopTracking() {
-      console.log("⏹️ stopTracking çağrıldı");
       if (!isRunning) return;
       stopSound.currentTime = 0;
       stopSound.play().catch(()=>{});
@@ -534,9 +534,17 @@
       localStorage.setItem('isRunning', 'false');
     }
 
+    // Yeni: Günlük sıfırlama için onay
+    function confirmDailyReset() {
+      if (confirm("Bu günün verileri silinecek. Emin misiniz?")) {
+        resetDaily();
+      }
+    }
+
     function resetDaily() {
       const todayKey = new Date().toISOString().split('T')[0];
       localStorage.removeItem('daily_' + todayKey);
+      localStorage.removeItem('goalCongrats_' + todayKey);
       accumulatedSeconds = 0;
       earnings = 0;
       localStorage.setItem('accumulatedSeconds', 0);
@@ -549,17 +557,17 @@
       drawChart();
     }
 
+    // Yeni: Tüm verileri sıfırlama için onay
+    function confirmAllReset() {
+      if (confirm("Uygulamadaki tüm veriler silinecek. Emin misiniz?")) {
+        resetAll();
+      }
+    }
+
     function resetAll() {
       clearInterval(timer);
       localStorage.clear();
       location.reload();
-    }
-
-    function showCongrats() {
-      if (!localStorage.getItem('goalCongrats')) {
-        alert('🎉 Tebrikler! Günlük hedefi aştınız.');
-        localStorage.setItem('goalCongrats', 'shown');
-      }
     }
 
     function toggleDarkMode() {
@@ -575,7 +583,6 @@
       if (view === 'main') drawChart();
     }
 
-    // Suggestions
     function showSuggestions(text) {
       const val = text.toLowerCase();
       let msg = '';
@@ -616,7 +623,6 @@
       }
     }
 
-    // Draw chart
     let chartInstance;
     function drawChart() {
       const ctx = document.getElementById('earningsChart').getContext('2d');
@@ -624,6 +630,7 @@
       const labels = [];
       const data = [];
       const today = new Date();
+
       if (range === 'daily') {
         for (let i = 6; i >= 0; i--) {
           const d = new Date(today);
@@ -662,6 +669,7 @@
           data.push(convertCurrency(sum));
         }
       }
+
       if (chartInstance) chartInstance.destroy();
       chartInstance = new Chart(ctx, {
         type: 'line',
@@ -697,7 +705,7 @@
           localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
           localStorage.setItem('earnings', earnings);
           updateDisplay();
-          if ((accumulatedSeconds / 3600) >= goal) showCongrats();
+          if ((accumulatedSeconds / 3600) >= goal) checkDailyGoal(accumulatedSeconds);
         }, 1000);
       } else {
         accumulatedSeconds = parseInt(localStorage.getItem('accumulatedSeconds')) || 0;
@@ -708,4 +716,4 @@
     };
   </script>
 </body>
-</html>
+</html> 
