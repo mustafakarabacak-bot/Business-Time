@@ -338,7 +338,8 @@
     // Değişkenler
     let timer;
     let startTimestamp = parseInt(localStorage.getItem('startTimestamp')) || null;
-    let accumulatedSeconds = parseInt(localStorage.getItem('accumulatedSeconds')) || 0;
+    // accumulatedSeconds yerine baseSeconds kullanalım
+    let baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
     let isRunning = localStorage.getItem('isRunning') === 'true';
     let goal = parseFloat(localStorage.getItem('dailyGoal')) || 8;
     let currency = localStorage.getItem('currency') || 'TL';
@@ -452,11 +453,11 @@
 
     // Yardımcı: geçerli toplam saniyeyi al
     function getCurrentSeconds() {
-      if (isRunning && startTimestamp) {
+      if (isRunning && startTimestamp !== null) {
         const now = Math.floor(Date.now() / 1000);
-        return accumulatedSeconds + (now - startTimestamp);
+        return baseSeconds + (now - startTimestamp);
       }
-      return accumulatedSeconds;
+      return baseSeconds;
     }
 
     // Doğru fazla mesai ayrımı ile kazanç hesaplama
@@ -520,12 +521,12 @@
         return;
       }
 
-      // "Ek Süre" yalnızca ilk başlatmada eklensin
-      if (accumulatedSeconds === 0) {
+      // "Ek Süre" yalnızca uygulama başlangıcında bir kez eklenir
+      if (!isRunning && baseSeconds === parseInt(localStorage.getItem('baseSeconds') || '0')) {
         const extraSec = ((+extraHoursInput.value || 0) * 3600) +
                          ((+extraMinutesInput.value || 0) * 60);
-        accumulatedSeconds = extraSec;
-        localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
+        baseSeconds += extraSec;
+        localStorage.setItem('baseSeconds', baseSeconds);
       }
 
       startSound.currentTime = 0;
@@ -539,14 +540,14 @@
       updateDisplay();
 
       timer = setInterval(() => {
-        accumulatedSeconds = getCurrentSeconds();
-        earnings = calculateEarnings(accumulatedSeconds);
+        const now = Math.floor(Date.now() / 1000);
+        const totalSec = baseSeconds + (now - startTimestamp);
+        earnings = calculateEarnings(totalSec);
 
         // Her saniye o günün kazancını kaydet (grafiği anlık doldurmak için)
         const todayKey = new Date().toISOString().split('T')[0];
         localStorage.setItem('daily_' + todayKey, earnings);
 
-        localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
         localStorage.setItem('earnings', earnings);
 
         updateDisplay();
@@ -559,9 +560,12 @@
       stopSound.play().catch(()=>{});
       clearInterval(timer);
 
-      accumulatedSeconds = getCurrentSeconds();
-      earnings = calculateEarnings(accumulatedSeconds);
-      localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
+      const now = Math.floor(Date.now() / 1000);
+      const totalSec = baseSeconds + (now - startTimestamp);
+      baseSeconds = totalSec;
+      localStorage.setItem('baseSeconds', baseSeconds);
+
+      earnings = calculateEarnings(totalSec);
       localStorage.setItem('earnings', earnings);
 
       // Günün kazancını bir kez daha kaydet
@@ -570,6 +574,7 @@
 
       isRunning = false;
       localStorage.setItem('isRunning', 'false');
+
       updateDisplay();
     }
 
@@ -584,9 +589,9 @@
       const todayKey = new Date().toISOString().split('T')[0];
       localStorage.removeItem('daily_' + todayKey);
       localStorage.removeItem('goalCongrats_' + todayKey);
-      accumulatedSeconds = 0;
+      baseSeconds = 0;
       earnings = 0;
-      localStorage.setItem('accumulatedSeconds', 0);
+      localStorage.setItem('baseSeconds', 0);
       localStorage.setItem('earnings', 0);
       if (isRunning) {
         startTimestamp = Math.floor(Date.now() / 1000);
@@ -736,23 +741,23 @@
     window.onload = () => {
       if (localStorage.getItem('isRunning') === 'true') {
         startTimestamp = parseInt(localStorage.getItem('startTimestamp')) || null;
-        accumulatedSeconds = parseInt(localStorage.getItem('accumulatedSeconds')) || 0;
+        baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
         isRunning = true;
         timer = setInterval(() => {
-          accumulatedSeconds = getCurrentSeconds();
-          earnings = calculateEarnings(accumulatedSeconds);
+          const now = Math.floor(Date.now() / 1000);
+          const totalSec = baseSeconds + (now - startTimestamp);
+          earnings = calculateEarnings(totalSec);
 
           // Anlık grafik kaydı
           const todayKey = new Date().toISOString().split('T')[0];
           localStorage.setItem('daily_' + todayKey, earnings);
 
-          localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
           localStorage.setItem('earnings', earnings);
           updateDisplay();
-          if ((accumulatedSeconds / 3600) >= goal) checkDailyGoal(accumulatedSeconds);
+          if ((totalSec / 3600) >= goal) checkDailyGoal(totalSec);
         }, 1000);
       } else {
-        accumulatedSeconds = parseInt(localStorage.getItem('accumulatedSeconds')) || 0;
+        baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
         earnings = parseFloat(localStorage.getItem('earnings')) || 0;
         updateDisplay();
       }
