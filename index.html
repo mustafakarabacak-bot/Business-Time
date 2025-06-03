@@ -489,10 +489,13 @@
       const earned = calculateEarnings(totalSec);
       document.getElementById('earnings').innerText = earned.toFixed(2).replace('.', ',') + ' ' + currency;
 
-      // Toplam süreyi saat, dakika, saniye olarak göster
+      // ===== HATASIZ SAAT : DAKİKA : SANİYE HESABI =====
       const hours = Math.floor(totalSec / 3600);
-      const minutes = Math.floor((totalSec % 3600) / 60);
-      const seconds = totalSec % 60;
+      const remAfterHours = totalSec - hours * 3600;
+      const minutes = Math.floor(remAfterHours / 60);
+      const seconds = remAfterHours - minutes * 60;
+      // =================================================
+
       document.getElementById('timeDisplay').innerText =
         `Toplam Süre: ${hours} saat ${minutes} dakika ${seconds} saniye`;
 
@@ -500,8 +503,8 @@
       const limitSec = 180 * 3600;
       const extraTime = totalSec > limitSec ? (totalSec - limitSec) : 0;
       const ehours = Math.floor(extraTime / 3600);
-      const eminutes = Math.floor((extraTime % 3600) / 60);
-      const eseconds = extraTime % 60;
+      const eminutes = Math.floor((extraTime - ehours * 3600) / 60);
+      const eseconds = extraTime - ehours * 3600 - eminutes * 60;
       document.getElementById('overtimeDisplay').innerText =
         `Fazla Mesai: ${ehours} saat ${eminutes} dakika ${eseconds} saniye`;
 
