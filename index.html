@@ -265,8 +265,8 @@
       </div>
       <div class="earnings-box" id="earnings">0,00 TL</div>
       <div class="summary">
-        <div id="timeDisplay">Toplam Süre: 0 saat 0 dakika</div>
-        <div id="overtimeDisplay">Fazla Mesai: 0 saat 0 dakika</div>
+        <div id="timeDisplay">Toplam Süre: 0 saat 0 dakika 0 saniye</div>
+        <div id="overtimeDisplay">Fazla Mesai: 0 saat 0 dakika 0 saniye</div>
       </div>
       <div class="chart-container">
         <select id="chartRange" onchange="drawChart()">
@@ -456,21 +456,26 @@
       return accumulatedSeconds;
     }
 
+    // Yeni: Doğru fazla mesai ayrımı ile kazanç hesaplama
     function calculateEarnings(totalSec) {
       const salary = parseFloat(salaryInput.value);
       if (isNaN(salary)) return 0;
-      const hourlyRate = salary / 173.33;
-      const hours = totalSec / 3600;
-      const ratePerSec = (hourlyRate / 3600) * ((hours >= 180) ? overtimeMultiplier : 1);
-      return +(totalSec * ratePerSec).toFixed(2);
+      const hourlyRate = salary / 173.33; // Saatlik ücret
+      // İlk 180 saatte normal, sonrası fazla mesai
+      const limitSec = 180 * 3600;
+      const regularSeconds = Math.min(totalSec, limitSec);
+      const overtimeSeconds = Math.max(totalSec - limitSec, 0);
+      const regularEarnings = regularSeconds * (hourlyRate / 3600);
+      const overtimeEarnings = overtimeSeconds * (hourlyRate / 3600) * overtimeMultiplier;
+      return +(regularEarnings + overtimeEarnings).toFixed(2);
     }
 
     // Günlük hedef kontrolü (her gün sadece bir kez)
     function checkDailyGoal(totalSec) {
       const todayKey = new Date().toISOString().split('T')[0];
       const alreadyNotified = localStorage.getItem('goalCongrats_' + todayKey);
-      const hours = totalSec / 3600;
-      if (hours >= goal && !alreadyNotified) {
+      const hoursWorked = totalSec / 3600;
+      if (hoursWorked >= goal && !alreadyNotified) {
         alert('🎉 Tebrikler! Günlük hedefi aştınız.');
         localStorage.setItem('goalCongrats_' + todayKey, 'true');
       }
@@ -481,44 +486,63 @@
       const earned = calculateEarnings(totalSec);
       document.getElementById('earnings').innerText = earned.toFixed(2).replace('.', ',') + ' ' + currency;
 
-      const saat = Math.floor(totalSec / 3600);
-      const dakika = Math.floor((totalSec % 3600) / 60);
-      document.getElementById('timeDisplay').innerText = `Toplam Süre: ${saat} saat ${dakika} dakika`;
+      // Toplam süreyi saat, dakika, saniye olarak göster
+      const hours = Math.floor(totalSec / 3600);
+      const minutes = Math.floor((totalSec % 3600) / 60);
+      const seconds = totalSec % 60;
+      document.getElementById('timeDisplay').innerText =
+        `Toplam Süre: ${hours} saat ${minutes} dakika ${seconds} saniye`;
 
-      const extraTime = totalSec > 180 * 3600 ? (totalSec - 180 * 3600) : 0;
-      const esaat = Math.floor(extraTime / 3600);
-      const edakika = Math.floor((extraTime % 3600) / 60);
-      document.getElementById('overtimeDisplay').innerText = `Fazla Mesai: ${esaat} saat ${edakika} dakika`;
+      // Fazla mesai süresi
+      const limitSec = 180 * 3600;
+      const extraTime = totalSec > limitSec ? (totalSec - limitSec) : 0;
+      const ehours = Math.floor(extraTime / 3600);
+      const eminutes = Math.floor((extraTime % 3600) / 60);
+      const eseconds = extraTime % 60;
+      document.getElementById('overtimeDisplay').innerText =
+        `Fazla Mesai: ${ehours} saat ${eminutes} dakika ${eseconds} saniye`;
 
       checkDailyGoal(totalSec);
     }
 
     function startTracking() {
       if (isRunning) return;
+
       const salary = parseFloat(salaryInput.value);
       if (isNaN(salary) || salary <= 0) {
         alert("Lütfen geçerli bir maaş bilgisi girin.");
         return;
       }
+
+      // "Ek Süre" yalnızca ilk başlatmada eklensin
+      if (accumulatedSeconds === 0) {
+        const extraSec = ((+extraHoursInput.value || 0) * 3600) +
+                         ((+extraMinutesInput.value || 0) * 60);
+        accumulatedSeconds = extraSec;
+        localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
+      }
+
       startSound.currentTime = 0;
       startSound.play().catch(()=>{});
-      const extraSec = ((+extraHoursInput.value || 0) * 3600) +
-                       ((+extraMinutesInput.value || 0) * 60);
-      const prevSec = getCurrentSeconds();
-      accumulatedSeconds = prevSec + extraSec;
-      earnings = calculateEarnings(accumulatedSeconds);
+
       startTimestamp = Math.floor(Date.now() / 1000);
       isRunning = true;
       localStorage.setItem('startTimestamp', startTimestamp);
-      localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
       localStorage.setItem('isRunning', 'true');
-      localStorage.setItem('earnings', earnings);
+
       updateDisplay();
+
       timer = setInterval(() => {
         accumulatedSeconds = getCurrentSeconds();
         earnings = calculateEarnings(accumulatedSeconds);
+
+        // Her saniye o günün kazancını kaydet (grafiği anlık doldurmak için)
+        const todayKey = new Date().toISOString().split('T')[0];
+        localStorage.setItem('daily_' + todayKey, earnings);
+
         localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
         localStorage.setItem('earnings', earnings);
+
         updateDisplay();
       }, 1000);
     }
@@ -528,12 +552,13 @@
       stopSound.currentTime = 0;
       stopSound.play().catch(()=>{});
       clearInterval(timer);
+
       accumulatedSeconds = getCurrentSeconds();
       earnings = calculateEarnings(accumulatedSeconds);
       localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
       localStorage.setItem('earnings', earnings);
 
-      // Yeni: günlük kazanç kaydı
+      // Günün kazancını bir kez daha kaydet
       const todayKey = new Date().toISOString().split('T')[0];
       localStorage.setItem('daily_' + todayKey, earnings);
 
@@ -710,6 +735,11 @@
         timer = setInterval(() => {
           accumulatedSeconds = getCurrentSeconds();
           earnings = calculateEarnings(accumulatedSeconds);
+
+          // Anlık grafik kaydı
+          const todayKey = new Date().toISOString().split('T')[0];
+          localStorage.setItem('daily_' + todayKey, earnings);
+
           localStorage.setItem('accumulatedSeconds', accumulatedSeconds);
           localStorage.setItem('earnings', earnings);
           updateDisplay();
