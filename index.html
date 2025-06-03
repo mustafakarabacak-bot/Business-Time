@@ -4,13 +4,364 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Business Time</title>
+  <!-- PWA manifest ve ikon -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png">
+  <style>
+    :root {
+      --bg: #f4f6fc;
+      --text: #1a1a1a;
+      --box: #ffffff;
+      --accent: #1a73e8;
+      --gold: #d4af37;
+    }
+    body.dark {
+      --bg: #121212;
+      --text: #f4f4f4;
+      --box: #1e1e1e;
+      --accent: #8ab4f8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      padding: 5vw;
+      transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
+      position: relative;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4vw;
+    }
+    .logo {
+      height: 40px;
+    }
+    .username {
+      font-size: 4vw;
+      opacity: 0.7;
+    }
+    /* Ana ekran ve Profil arasında geçiş yapan görünüm */
+    .hidden { display: none; }
+    /* Giriş alanları */
+    .input-group {
+      max-width: 500px;
+      margin: 2vw auto;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 1vw;
+      font-weight: 600;
+      font-size: 4vw;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 2vw;
+      border-radius: 1vw;
+      font-size: 4vw;
+      border: 1px solid #ccc;
+      background: var(--box);
+      color: var(--text);
+    }
+    .time-group {
+      display: flex;
+      gap: 2vw;
+    }
+    /* Düğmeler */
+    .buttons {
+      max-width: 500px;
+      margin: 2vw auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2vw;
+      justify-content: center;
+    }
+    .buttons button {
+      flex: 1 1 45%;
+      padding: 3vw;
+      font-size: 4vw;
+      font-weight: bold;
+      border: none;
+      border-radius: 1vw;
+      cursor: pointer;
+      min-width: 100px;
+    }
+    .start-btn { background: #34a853; color: white; }
+    .stop-btn  { background: #ea4335; color: white; }
+    .reset-btn { background: #fbbc04; color: white; }
+    .dark-toggle { background: var(--accent); color: white; }
+    /* Kazanç kutusu */
+    .earnings-box {
+      max-width: 500px;
+      margin: 3vw auto;
+      background: var(--box);
+      font-size: 5vw;
+      font-weight: bold;
+      padding: 4vw;
+      text-align: center;
+      border-radius: 2vw;
+      color: var(--gold);
+    }
+    /* Özet (toplam süre ve fazla mesai) */
+    .summary {
+      max-width: 500px;
+      margin: 2vw auto 6vw;
+      font-size: 4vw;
+      text-align: center;
+      color: var(--text);
+    }
+    /* Alt gezinme çubuğu */
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: space-around;
+      background: var(--box);
+      padding: 1vw 0;
+      border-top: 1px solid #ccc;
+    }
+    .nav button {
+      background: none;
+      border: none;
+      font-size: 4vw;
+      font-weight: bold;
+      color: var(--accent);
+      flex: 1;
+    }
+    /* Profil sayfası */
+    #profileView input,
+    #profileView textarea {
+      width: 100%;
+      padding: 2vw;
+      font-size: 4vw;
+      margin-bottom: 2vw;
+      border-radius: 1vw;
+      border: 1px solid #ccc;
+      background: var(--box);
+      color: var(--text);
+    }
+    #profileView h2 {
+      text-align: center;
+      margin-bottom: 2vw;
+      font-size: 5vw;
+      color: var(--accent);
+    }
+    #careerSuggestion {
+      margin-top: 2vw;
+      font-size: 4vw;
+      color: var(--accent);
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <!-- Güncellenmiş içerik: JavaScript ile takip sistemi, kullanıcı profili ve AI önerileri -->
+  <!-- Başlık: Solda ikon, sağda kullanıcı adı -->
+  <header>
+    <img src="icon.png" class="logo" alt="logo" />
+    <div class="username" id="displayName"></div>
+  </header>
+
+  <!-- Ana sayfa görünümü -->
+  <main id="mainView">
+    <!-- Maaş Bilgisi Girişi -->
+    <div class="input-group">
+      <label for="salary">Maaş Bilgisi (TL)</label>
+      <input type="number" id="salary" placeholder="Aylık maaşınızı girin">
+    </div>
+    <!-- Ek Süre Girişi -->
+    <div class="input-group">
+      <label>Ek Süre</label>
+      <div class="time-group">
+        <input type="number" id="extraHours" placeholder="Saat">
+        <input type="number" id="extraMinutes" placeholder="Dakika">
+      </div>
+    </div>
+    <!-- Günlük Hedef Girişi -->
+    <div class="input-group">
+      <label>Günlük Hedef (saat)</label>
+      <input type="number" id="dailyGoal" placeholder="Örn: 8">
+    </div>
+    <!-- Düğmeler -->
+    <div class="buttons">
+      <button class="start-btn" onclick="startTracking()">BAŞLAT</button>
+      <button class="stop-btn"  onclick="stopTracking()">DURDUR</button>
+      <button class="reset-btn" onclick="confirmReset()">SIFIRLA</button>
+      <button class="dark-toggle" onclick="toggleDarkMode()">GECE MODU</button>
+    </div>
+    <!-- Kazanç ve Süre Bilgisi -->
+    <div class="earnings-box" id="earnings">0,00 TL</div>
+    <div class="summary">
+      <div id="timeDisplay">Toplam Süre: 0s</div>
+      <div id="overtimeDisplay">Fazla Mesai: 0s</div>
+    </div>
+  </main>
+
+  <!-- Profil görünümü (başta gizli) -->
+  <main id="profileView" class="hidden">
+    <h2>Profil</h2>
+    <input id="careerTitle" placeholder="Meslek / Alan">
+    <textarea id="careerSkills" placeholder="Beceriler, ilgi alanları"></textarea>
+    <div id="careerSuggestion"></div>
+  </main>
+
+  <!-- Alttaki gezinme çubuğu -->
+  <nav class="nav">
+    <button onclick="showView('main')">Ana Sayfa</button>
+    <button onclick="showView('profile')">Profil</button>
+  </nav>
+
   <script>
-    document.body.innerHTML = '<h2>Uygulama güncellendi. Dosyaları kontrol et!</h2>';
+    // Timer ve değişkenler
+    let timer;
+    let totalSeconds = parseInt(localStorage.getItem('totalSeconds')) || 0;
+    let earnings     = parseFloat(localStorage.getItem('earnings'))     || 0;
+    let name         = localStorage.getItem('username');
+    let goal         = parseFloat(localStorage.getItem('dailyGoal'))    || 8;
+
+    // Kullanıcı adı yoksa prompt ile al, sakla
+    if (!name) {
+      name = prompt("Hoş geldiniz! Lütfen adınızı ve soyadınızı girin:");
+      if (name) localStorage.setItem('username', name);
+    }
+    document.getElementById("displayName").innerText = name || '';
+
+    // Input elemanlarını al
+    const salaryInput      = document.getElementById('salary');
+    const extraHoursInput  = document.getElementById('extraHours');
+    const extraMinutesInput= document.getElementById('extraMinutes');
+    const dailyGoalInput   = document.getElementById('dailyGoal');
+    const titleInput       = document.getElementById('careerTitle');
+    const skillsInput      = document.getElementById('careerSkills');
+
+    // LocalStorage’dan değerleri getir ve inputlara yaz
+    salaryInput.value      = localStorage.getItem('salary')     || '';
+    extraHoursInput.value  = localStorage.getItem('extraHours') || 0;
+    extraMinutesInput.value= localStorage.getItem('extraMinutes')|| 0;
+    dailyGoalInput.value   = goal;
+    titleInput.value       = localStorage.getItem('careerTitle')|| '';
+    skillsInput.value      = localStorage.getItem('careerSkills')|| '';
+
+    // Input değişimlerini sakla
+    salaryInput.onchange       = () => localStorage.setItem('salary', salaryInput.value);
+    extraHoursInput.onchange   = () => localStorage.setItem('extraHours', extraHoursInput.value);
+    extraMinutesInput.onchange = () => localStorage.setItem('extraMinutes', extraMinutesInput.value);
+    dailyGoalInput.onchange    = () => {
+      localStorage.setItem('dailyGoal', dailyGoalInput.value);
+      goal = parseFloat(dailyGoalInput.value);
+    };
+    titleInput.oninput   = e => localStorage.setItem('careerTitle', e.target.value);
+    skillsInput.oninput  = e => {
+      localStorage.setItem('careerSkills', e.target.value);
+      // Basit bir "AI tavsiye" mantığı
+      const val = e.target.value.toLowerCase();
+      if (val.includes('yazılım')) {
+        document.getElementById('careerSuggestion').innerText = 
+          'Yapay zeka, front-end veya mobil geliştirici pozisyonları ilginizi çekebilir.';
+      } else if (val.includes('tasarım')) {
+        document.getElementById('careerSuggestion').innerText = 
+          'UI/UX, grafik tasarım alanlarında freelance işler düşünebilirsiniz.';
+      } else {
+        document.getElementById('careerSuggestion').innerText = '';
+      }
+    };
+
+    function startTracking() {
+      clearInterval(timer);
+      const salary     = parseFloat(salaryInput.value) || 0;
+      const hourlyRate = salary / 173.33;
+      // Saat >= 180 olduğunda 1.5x katsayısı
+      const perSecond = () => {
+        const hours = totalSeconds / 3600;
+        return (hourlyRate / 3600) * ((hours >= 180) ? 1.5 : 1);
+      };
+      // Ek süreyi saniyeye çevir
+      const extraSeconds = ((+extraHoursInput.value || 0) * 3600 + (+extraMinutesInput.value || 0) * 60);
+      earnings += extraSeconds * perSecond();
+      totalSeconds += extraSeconds;
+      updateDisplay();
+
+      timer = setInterval(() => {
+        totalSeconds++;
+        earnings += perSecond();
+        updateDisplay();
+        localStorage.setItem('totalSeconds', totalSeconds);
+        localStorage.setItem('earnings', earnings);
+        // Günlük hedef aşıldıysa tebrik
+        if ((totalSeconds / 3600) >= goal) showCongrats();
+      }, 1000);
+    }
+
+    function stopTracking() {
+      clearInterval(timer);
+    }
+
+    function confirmReset() {
+      if (confirm("Tüm veriler sıfırlansın mı?")) {
+        resetTracking();
+      }
+    }
+
+    function resetTracking() {
+      clearInterval(timer);
+      totalSeconds = 0;
+      earnings     = 0;
+      localStorage.clear();
+      updateDisplay();
+      location.reload();
+    }
+
+    function updateDisplay() {
+      // TL formatı ve emoji (180 saati geçince)
+      const formatted = earnings.toFixed(2).replace('.', ',') + ' TL';
+      const emoji     = (totalSeconds / 3600 > 180) ? ' 💰' : '';
+      document.getElementById('earnings').innerText       = formatted + emoji;
+      document.getElementById('timeDisplay').innerText     = 
+        `Toplam Süre: ${(totalSeconds / 3600).toFixed(1)}s`;
+      const extraTime = totalSeconds > 180 * 3600 ? (totalSeconds - 180 * 3600) : 0;
+      document.getElementById('overtimeDisplay').innerText = 
+        `Fazla Mesai: ${(extraTime / 3600).toFixed(1)}s`;
+      // 180 saati geçince tarayıcı bildirimi
+      if ((totalSeconds / 3600).toFixed(1) >= 180) {
+        if (Notification.permission === 'granted') {
+          new Notification('Tebrikler! 180 saati geçtiniz!');
+        } else if (Notification.permission !== 'denied') {
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') 
+              new Notification('Tebrikler! 180 saati geçtiniz!');
+          });
+        }
+      }
+    }
+
+    function showCongrats() {
+      // Yalnızca bir kez göster
+      if (!localStorage.getItem('goalCongrats')) {
+        alert('🎉 Tebrikler! Günlük hedefi aştınız.');
+        localStorage.setItem('goalCongrats', 'shown');
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark');
+      // İstersen buraya localStorage kaydı da ekleyebilirsin:
+      // localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+    }
+
+    function showView(view) {
+      document.getElementById('mainView').classList.add('hidden');
+      document.getElementById('profileView').classList.add('hidden');
+      document.getElementById(view + 'View').classList.remove('hidden');
+    }
+
+    // Başlangıçta gerekli görünümü ve bildirim iznini ayarla
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+    updateDisplay();
   </script>
 </body>
 </html>
