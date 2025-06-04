@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="tr">
+<!DOCTYPE html>
+<html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -235,17 +236,23 @@
       <img id="profilePhoto" class="profile-photo" src="" alt="Profil Fotoğrafı" />
       <div class="username" id="displayName"></div>
     </div>
-  </header>  <!-- Container -->  <div class="container">
+  </header>
+
+  <!-- Container -->
+  <div class="container">
     <!-- Ana Sayfa -->
     <main id="mainView">
       <div class="input-group">
         <label for="salary">Maaş Bilgisi (TL)</label>
         <input type="number" id="salary" placeholder="Aylık maaşınızı girin">
       </div>
+
+      <!-- Burada eklendi: Aylık Çalışma Süresi Limiti -->
       <div class="input-group">
         <label for="monthlyLimit">Aylık Çalışma Süresi Limiti (saat)</label>
         <input type="number" id="monthlyLimit" placeholder="Örn: 160">
       </div>
+
       <div class="input-group">
         <label>Ek Süre</label>
         <div class="time-group">
@@ -254,7 +261,8 @@
         </div>
       </div>
       <div class="input-group">
-        <label>Günlük Hedef (saat)</n        <input type="number" id="dailyGoal" placeholder="Örn: 8">
+        <label>Günlük Hedef (saat)</label>
+        <input type="number" id="dailyGoal" placeholder="Örn: 8">
       </div>
       <div class="buttons">
         <button class="start-btn" onclick="startTracking()">BAŞLAT</button>
@@ -275,39 +283,43 @@
         </select>
         <canvas id="earningsChart"></canvas>
       </div>
-    </main><!-- Profil -->
-<main id="profileView" class="hidden">
-  <h2>Profil</h2>
-  <input type="file" id="photoUpload" accept="image/*" style="margin-bottom:2vw;">
-  <input id="careerTitle" placeholder="Meslek / Alan">
-  <textarea id="careerSkills" placeholder="Beceriler, ilgi alanları" style="height:20vw;"></textarea>
-  <div id="careerSuggestion"></div>
-  <div id="jobLinks"></div>
-</main>
+    </main>
 
-<!-- Ayarlar -->
-<main id="settingsView" class="hidden">
-  <h2>Ayarlar</h2>
-  <label for="currency">Döviz Cinsi</label>
-  <select id="currency">
-    <option value="TL">TL</option>
-    <option value="USD">USD</option>
-    <option value="EUR">EUR</option>
-  </select>
-  <label for="exchangeRate">Döviz Kuru (1 birim USD/EUR = ? TL)</label>
-  <input type="number" step="0.01" id="exchangeRate" placeholder="Örn: 32.50">
-  <label for="overtimeMultiplier">Fazla Mesai Çarpanı</label>
-  <input type="number" step="0.1" id="overtimeMultiplier" placeholder="Örn: 1.5 (default)">
-  <label for="themeSelect">Tema</label>
-  <select id="themeSelect">
-    <option value="auto">Otomatik</option>
-    <option value="light">Aydınlık</option>
-    <option value="dark">Koyu</option>
-  </select>
-  <button onclick="confirmAllReset()">Tüm Verileri Sıfırla</button>
-</main>
+    <!-- Profil -->
+    <main id="profileView" class="hidden">
+      <h2>Profil</h2>
+      <input type="file" id="photoUpload" accept="image/*" style="margin-bottom:2vw;">
+      <input id="careerTitle" placeholder="Meslek / Alan">
+      <textarea id="careerSkills" placeholder="Beceriler, ilgi alanları" style="height:20vw;"></textarea>
+      <div id="careerSuggestion"></div>
+      <div id="jobLinks"></div>
+    </main>
 
-  </div>  <!-- Alt Menü -->  <nav class="nav">
+    <!-- Ayarlar -->
+    <main id="settingsView" class="hidden">
+      <h2>Ayarlar</h2>
+      <label for="currency">Döviz Cinsi</label>
+      <select id="currency">
+        <option value="TL">TL</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+      </select>
+      <label for="exchangeRate">Döviz Kuru (1 birim USD/EUR = ? TL)</label>
+      <input type="number" step="0.01" id="exchangeRate" placeholder="Örn: 32.50">
+      <label for="overtimeMultiplier">Fazla Mesai Çarpanı</label>
+      <input type="number" step="0.1" id="overtimeMultiplier" placeholder="Örn: 1.5 (default)">
+      <label for="themeSelect">Tema</label>
+      <select id="themeSelect">
+        <option value="auto">Otomatik</option>
+        <option value="light">Aydınlık</option>
+        <option value="dark">Koyu</option>
+      </select>
+      <button onclick="confirmAllReset()">Tüm Verileri Sıfırla</button>
+    </main>
+  </div>
+
+  <!-- Alt Menü -->
+  <nav class="nav">
     <button onclick="showView('main')">
       <span class="nav-icon">🏠</span>
       Ana Sayfa
@@ -320,7 +332,11 @@
       <span class="nav-icon">⚙️</span>
       Ayarlar
     </button>
-  </nav>  <!-- Ses Efektleri (Ses yoksa gizli geçiş) --><audio id="startSound" style="display:none"></audio> <audio id="stopSound" style="display:none"></audio>
+  </nav>
+
+  <!-- Ses Efektleri (Ses yoksa gizli geçiş) -->
+  <audio id="startSound" style="display:none"></audio>
+  <audio id="stopSound" style="display:none"></audio>
 
   <script>
     // Değişkenler
@@ -334,6 +350,7 @@
     let overtimeMultiplier = parseFloat(localStorage.getItem('overtimeMultiplier')) || 1.5;
     let earnings = parseFloat(localStorage.getItem('earnings')) || 0;
     let name = localStorage.getItem('username');
+    // Burada yeni: monthlyLimit değişkeni
     let monthlyLimit = parseFloat(localStorage.getItem('monthlyLimit')) || 180;
 
     // Profil Fotoğrafı
@@ -365,7 +382,7 @@
 
     // Eleman referansları
     const salaryInput       = document.getElementById('salary');
-    const monthlyLimitInput = document.getElementById('monthlyLimit');
+    const monthlyLimitInput = document.getElementById('monthlyLimit'); // Yeni input
     const extraHoursInput   = document.getElementById('extraHours');
     const extraMinutesInput = document.getElementById('extraMinutes');
     const dailyGoalInput    = document.getElementById('dailyGoal');
@@ -388,7 +405,7 @@
     exchangeRateInput.value = exchangeRate;
     overtimeInput.value     = overtimeMultiplier;
     themeSelect.value       = localStorage.getItem('theme') || 'auto';
-    monthlyLimitInput.value = monthlyLimit;
+    monthlyLimitInput.value = monthlyLimit;  // Yeni değer yüklendi
 
     // Tema Uygulama
     function applyTheme() {
@@ -456,11 +473,12 @@
       return baseSeconds;
     }
 
-    // Doğru fazla mesai ayrımı ile kazanç hesaplama
+    // Fazla mesai ayrımı ve kazanç hesaplama
     function calculateEarnings(totalSec) {
       const salary = parseFloat(salaryInput.value);
       if (isNaN(salary)) return 0;
-      const hourlyRate = salary / monthlyLimit; // Saatlik ücret
+      // Saatlik ücret = aylık maaş / aylıkLimit
+      const hourlyRate = salary / monthlyLimit;
       const limitSec = monthlyLimit * 3600;
       const regularSeconds = Math.min(totalSec, limitSec);
       const overtimeSeconds = Math.max(totalSec - limitSec, 0);
@@ -650,7 +668,7 @@
         container.innerHTML = `
           <a href="https://www.kariyer.net/ara?q=öğretmen" target="_blank">Öğretmen İlanları</a>
         `;
-      } else if (val.includes('muhaseбе')) {
+      } else if (val.includes('muhasebe')) {
         container.innerHTML = `
           <a href="https://www.kariyer.net/ara?q=muhasebe" target="_blank">Muhasebe İlanları</a>
         `;
@@ -751,5 +769,6 @@
       }
       drawChart();
     };
-  </script></body>
-        </html>
+  </script>
+</body>
+</html>
