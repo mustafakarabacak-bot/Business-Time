@@ -19,180 +19,437 @@
       --work-color: rgba(26, 115, 232, 0.8);
       --idle-color: rgba(232, 26, 26, 0.8);
       --earn-color: rgba(26, 232, 26, 0.8);
+      --success: #34a853;
+      --danger: #ea4335;
+      --warning: #ff9800;
+      --info: #fbbc04;
+      --transition: all 0.3s ease;
+      --border-radius: 12px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
     body.dark {
       --bg: #121212;
       --text: #f4f4f4;
       --box: #1e1e1e;
       --accent: #8ab4f8;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    }
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Segoe UI', sans-serif;
-      transition: background 0.3s, color 0.3s;
+      transition: var(--transition);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      line-height: 1.6;
     }
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1vw 5vw;
+      padding: 15px 5vw;
       background: var(--box);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     .logo {
-      height: 40px;
+      height: 45px;
+      transition: var(--transition);
     }
     .profile-info {
       display: flex;
       align-items: center;
-      gap: 1vw;
+      gap: 12px;
     }
     .profile-photo {
-      height: 40px;
-      width: 40px;
+      height: 42px;
+      width: 42px;
       border-radius: 50%;
       object-fit: cover;
+      border: 2px solid var(--accent);
       display: none;
     }
     .username {
-      font-size: 4vw;
-      opacity: 0.7;
+      font-size: 16px;
+      font-weight: 500;
+      opacity: 0.85;
       display: none;
     }
     .container {
       flex: 1;
-      padding: 2vw 5vw;
+      padding: 20px 5vw;
       overflow-y: auto;
     }
     .input-group {
-      max-width: 500px;
-      margin: 2vw auto;
+      max-width: 600px;
+      margin: 20px auto;
+      position: relative;
     }
     .input-group label {
       display: block;
-      margin-bottom: 1vw;
+      margin-bottom: 10px;
       font-weight: 600;
-      font-size: 4vw;
+      font-size: 16px;
+      color: var(--text);
+      opacity: 0.9;
     }
     .input-group input,
     .input-group select {
       width: 100%;
-      padding: 2vw;
-      border-radius: 1vw;
-      font-size: 4vw;
-      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      border: 1px solid #ddd;
       background: var(--box);
       color: var(--text);
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+    }
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
     }
     .time-group {
       display: flex;
-      gap: 2vw;
+      gap: 15px;
+    }
+    .time-group input {
+      flex: 1;
     }
     .buttons {
-      max-width: 500px;
-      margin: 2vw auto;
+      max-width: 600px;
+      margin: 30px auto;
       display: flex;
       flex-wrap: wrap;
-      gap: 2vw;
+      gap: 15px;
       justify-content: center;
     }
     .buttons button {
-      flex: 1 1 30%;
-      padding: 3vw;
-      font-size: 5vw;
-      font-weight: bold;
+      flex: 1 1 200px;
+      padding: 18px;
+      font-size: 18px;
+      font-weight: 600;
       border: none;
-      border-radius: 1vw;
+      border-radius: var(--border-radius);
       cursor: pointer;
-      min-width: 100px;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
-    .start-btn { background: #34a853; color: white; }
-    .stop-btn  { background: #ea4335; color: white; }
-    .break-btn { background: #ff9800; color: white; }
-    .reset-btn { background: #fbbc04; color: white; }
-    .dark-toggle { background: var(--accent); color: white; }
+    .buttons button i {
+      font-size: 22px;
+    }
+    .buttons button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    .buttons button:active {
+      transform: translateY(0);
+    }
+    .start-btn { 
+      background: var(--success); 
+      color: white; 
+    }
+    .stop-btn  { 
+      background: var(--danger); 
+      color: white; 
+    }
+    .break-btn { 
+      background: var(--warning); 
+      color: white; 
+    }
+    .reset-btn { 
+      background: var(--info); 
+      color: white; 
+    }
+    .dark-toggle { 
+      background: var(--accent); 
+      color: white; 
+    }
     .earnings-box {
-      max-width: 500px;
-      margin: 3vw auto;
+      max-width: 600px;
+      margin: 30px auto;
       background: var(--box);
-      font-size: 7vw;
-      font-weight: bold;
-      padding: 4vw;
+      font-size: 36px;
+      font-weight: 700;
+      padding: 25px;
       text-align: center;
-      border-radius: 2vw;
+      border-radius: var(--border-radius);
       color: var(--gold);
+      box-shadow: var(--shadow);
+      border: 2px solid var(--gold);
+      transition: var(--transition);
     }
     .earnings-detail {
-      max-width: 500px;
-      margin: 1vw auto;
-      font-size: 4vw;
+      max-width: 600px;
+      margin: 15px auto;
+      font-size: 16px;
       text-align: center;
       color: var(--text);
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .earnings-detail div {
+      background: var(--box);
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      flex: 1;
+      min-width: 200px;
     }
     .summary {
-      max-width: 500px;
-      margin: 2vw auto 6vw;
-      font-size: 5vw;
+      max-width: 600px;
+      margin: 30px auto 50px;
+      font-size: 18px;
       text-align: center;
       color: var(--text);
+      background: var(--box);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
     }
     .remaining {
-      max-width: 500px;
-      margin: 1vw auto;
-      font-size: 4vw;
+      max-width: 600px;
+      margin: 20px auto;
+      font-size: 18px;
       text-align: center;
       color: var(--accent);
+      background: var(--box);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      font-weight: 600;
     }
     .chart-container {
-      max-width: 500px;
-      margin: 2vw auto;
+      max-width: 600px;
+      margin: 30px auto;
+      background: var(--box);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
     }
     #earningsChart,
     #workChart,
     #idleChart {
       width: 100% !important;
-      height: auto !important;
+      height: 300px !important;
     }
     .nav {
       display: flex;
       justify-content: space-around;
       background: var(--box);
-      padding: 1vw 0;
-      border-top: 1px solid #ccc;
+      padding: 15px 0;
+      border-top: 1px solid #ddd;
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
     }
     .nav button {
       background: none;
       border: none;
-      font-size: 5vw;
-      font-weight: bold;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--accent);
       display: flex;
       flex-direction: column;
       align-items: center;
+      padding: 8px 15px;
+      border-radius: 50px;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .nav button.active {
+      background: rgba(26, 115, 232, 0.1);
+    }
+    .nav button:hover {
+      background: rgba(26, 115, 232, 0.15);
     }
     .nav-icon {
-      font-size: 8vw;
+      font-size: 24px;
+      margin-bottom: 5px;
     }
     .hidden { display: none; }
-    /* Grafik başlıkları */
     .chart-title {
       text-align: center;
-      font-size: 5vw;
+      font-size: 20px;
       font-weight: 600;
-      margin-bottom: 1vw;
+      margin-bottom: 20px;
       color: var(--text);
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--success);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s, top 0.3s;
+      pointer-events: none;
+    }
+    .notification.show {
+      opacity: 1;
+      top: 30px;
+    }
+    .settings-view {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--box);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    .settings-view .input-group {
+      margin-bottom: 25px;
+    }
+    .progress-container {
+      max-width: 600px;
+      margin: 25px auto;
+      background: var(--box);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+    .progress-bar {
+      height: 25px;
+      background: #e0e0e0;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 10px;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 12px;
+      transition: width 0.5s ease;
+    }
+    .progress-text {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+    .info-tooltip {
+      display: inline-block;
+      margin-left: 8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      text-align: center;
+      font-size: 14px;
+      line-height: 20px;
+      cursor: help;
+    }
+    .section-title {
+      text-align: center;
+      margin: 30px 0 20px;
+      color: var(--accent);
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .time-card {
+      display: flex;
+      justify-content: space-between;
+      background: var(--box);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-bottom: 15px;
+      box-shadow: var(--shadow);
+    }
+    .time-card div:first-child {
+      font-weight: 600;
+      color: var(--text);
+      opacity: 0.8;
+    }
+    .time-card div:last-child {
+      font-weight: 700;
+      color: var(--accent);
+    }
+    
+    @media (max-width: 768px) {
+      .buttons button {
+        padding: 15px;
+        font-size: 16px;
+      }
+      .earnings-box {
+        font-size: 28px;
+        padding: 20px;
+      }
+      .summary {
+        font-size: 16px;
+        padding: 15px;
+      }
+      .chart-container {
+        padding: 15px;
+      }
+      #earningsChart,
+      #workChart,
+      #idleChart {
+        height: 250px !important;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .time-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .earnings-box {
+        font-size: 24px;
+      }
+      .buttons button {
+        flex: 1 1 100%;
+      }
+      .nav button {
+        font-size: 12px;
+        padding: 5px 10px;
+      }
+      .nav-icon {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Bildirim -->
+  <div class="notification" id="notification">Bildirim Mesajı</div>
+  
   <!-- Header -->
   <header>
-    <img src="icon.png" class="logo" alt="logo" />
+    <div class="logo-container">
+      <img src="icon.png" class="logo" alt="Business Time Logo" />
+      <h1 style="display: none;">Business Time</h1>
+    </div>
     <div class="profile-info">
       <img id="profilePhoto" class="profile-photo" src="" alt="Profil Fotoğrafı" />
     </div>
@@ -202,93 +459,159 @@
   <div class="container">
     <!-- Ana Sayfa -->
     <main id="mainView">
+      <h2 class="section-title">İş Takip Paneli</h2>
+      
       <div class="input-group">
-        <label for="salary">Maaş Bilgisi (TL)</label>
+        <label for="salary">Maaş Bilgisi (TL) <span class="info-tooltip" title="Aylık brüt maaşınızı girin">?</span></label>
         <input type="number" id="salary" placeholder="Aylık maaşınızı girin" min="1" step="100">
       </div>
+      
       <div class="input-group">
-        <label for="monthlyLimit">Aylık Çalışma Süresi Limiti (saat)</label>
-        <input type="number" id="monthlyLimit" placeholder="Örn: 160" min="1" step="1">
+        <label for="monthlyLimit">Aylık Çalışma Süresi Limiti (saat) <span class="info-tooltip" title="Tam zamanlı çalışanlar için genelde 180 saattir">?</span></label>
+        <input type="number" id="monthlyLimit" placeholder="Örn: 180" min="1" step="1">
       </div>
+      
       <div class="input-group">
-        <label>Ek Süre</label>
+        <label for="dailyGoal">Günlük Hedef (saat) <span class="info-tooltip" title="Günlük çalışmayı hedeflediğiniz saat">?</span></label>
+        <input type="number" id="dailyGoal" placeholder="Örn: 8" min="1" step="0.5">
+      </div>
+      
+      <div class="input-group">
+        <label>Ek Süre <span class="info-tooltip" title="Takip dışı çalıştığınız süreleri ekleyin">?</span></label>
         <div class="time-group">
           <input type="number" id="extraHours" placeholder="Saat" min="0" step="1">
-          <input type="number" id="extraMinutes" placeholder="Dakika" min="0" step="1">
+          <input type="number" id="extraMinutes" placeholder="Dakika" min="0" step="1" max="59">
         </div>
       </div>
-      <div class="input-group">
-        <label>Günlük Hedef (saat)</label>
-        <input type="number" id="dailyGoal" placeholder="Örn: 8" min="1" step="1">
-      </div>
+      
       <div class="buttons">
-        <button class="start-btn"   onclick="startTracking()">BAŞLAT</button>
-        <button class="stop-btn"    onclick="stopTracking()">DURDUR</button>
-        <button class="break-btn"   onclick="toggleBreak()" id="breakButton">MOLA</button>
-        <button class="reset-btn"   onclick="confirmDailyReset()">SIFIRLA (Günlük)</button>
-        <button class="dark-toggle" onclick="toggleDarkMode()">GECE MODU</button>
+        <button class="start-btn" onclick="startTracking()">
+          <i>▶️</i> BAŞLAT
+        </button>
+        <button class="stop-btn" onclick="stopTracking()">
+          <i>⏹️</i> DURDUR
+        </button>
+        <button class="break-btn" onclick="toggleBreak()" id="breakButton">
+          <i>⏸️</i> MOLA
+        </button>
+        <button class="reset-btn" onclick="confirmDailyReset()">
+          <i>🔄</i> SIFIRLA
+        </button>
+        <button class="dark-toggle" onclick="toggleDarkMode()">
+          <i>🌙</i> TEMA
+        </button>
       </div>
+      
       <div class="earnings-box" id="earnings">0,00 TL</div>
-      <div class="earnings-detail" id="earningsDetail"></div>
-      <div class="remaining" id="remainingTime"></div>
+      
+      <div class="earnings-detail">
+        <div>Normal Kazanç: <span id="regularEarnings">0,00 TL</span></div>
+        <div>Fazla Mesai: <span id="overtimeEarnings">0,00 TL</span></div>
+      </div>
+      
+      <div class="remaining" id="remainingTime">Aylık limitten kalan süre: 180 saat 0 dakika</div>
+      
+      <div class="progress-container">
+        <label>Günlük Hedef İlerleme</label>
+        <div class="progress-bar">
+          <div class="progress-fill" id="dailyProgress" style="width: 0%"></div>
+          <div class="progress-text" id="progressText">0%</div>
+        </div>
+      </div>
+      
       <div class="summary">
-        <div id="timeDisplay">Toplam Süre: 0 saat 0 dakika 0 saniye</div>
-        <div id="overtimeDisplay">Fazla Mesai: 0 saat 0 dakika 0 saniye</div>
+        <div class="time-card">
+          <div>Toplam Süre:</div>
+          <div id="timeDisplay">0 saat 0 dakika</div>
+        </div>
+        <div class="time-card">
+          <div>Fazla Mesai:</div>
+          <div id="overtimeDisplay">0 saat 0 dakika</div>
+        </div>
+        <div class="time-card">
+          <div>Mola Süresi:</div>
+          <div id="breakDisplay">0 saat 0 dakika</div>
+        </div>
       </div>
     </main>
 
     <!-- Profil -->
     <main id="profileView" class="hidden">
-      <h2 class="chart-title">Çalışılan Zaman (Saat)</h2>
-      <canvas id="workChart"></canvas>
-      <h2 class="chart-title">Boşta Kalan Süre (Saat)</h2>
-      <canvas id="idleChart"></canvas>
-      <h2 class="chart-title">Kazanılan Para (TL)</h2>
-      <canvas id="earningsChart"></canvas>
+      <h2 class="section-title">İstatistikler</h2>
+      
+      <div class="chart-container">
+        <h3 class="chart-title">Çalışılan Zaman (Saat)</h3>
+        <canvas id="workChart"></canvas>
+      </div>
+      
+      <div class="chart-container">
+        <h3 class="chart-title">Boşta Kalan Süre (Saat)</h3>
+        <canvas id="idleChart"></canvas>
+      </div>
+      
+      <div class="chart-container">
+        <h3 class="chart-title">Kazanılan Para (TL)</h3>
+        <canvas id="earningsChart"></canvas>
+      </div>
     </main>
 
     <!-- Ayarlar -->
     <main id="settingsView" class="hidden">
-      <h2>Ayarlar</h2>
-      <label for="currency">Döviz Cinsi</label>
-      <select id="currency">
-        <option value="TL">TL</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-      <label for="exchangeRate">Döviz Kuru (1 birim USD/EUR = ? TL)</label>
-      <input type="number" step="0.01" id="exchangeRate" placeholder="Örn: 32.50">
-      <label for="overtimeMultiplier">Fazla Mesai Çarpanı</label>
-      <input type="number" step="0.1" id="overtimeMultiplier" placeholder="Örn: 1.5 (default)">
-      <label for="themeSelect">Tema</label>
-      <select id="themeSelect">
-        <option value="auto">Otomatik</option>
-        <option value="light">Aydınlık</option>
-        <option value="dark">Koyu</option>
-      </select>
-      <button onclick="confirmAllReset()">Tüm Verileri Sıfırla</button>
+      <h2 class="section-title">Ayarlar</h2>
+      
+      <div class="settings-view">
+        <div class="input-group">
+          <label for="currency">Döviz Cinsi</label>
+          <select id="currency">
+            <option value="TL">TL</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label for="exchangeRate">Döviz Kuru (1 birim USD/EUR = ? TL)</label>
+          <input type="number" step="0.01" id="exchangeRate" placeholder="Örn: 32.50">
+        </div>
+        
+        <div class="input-group">
+          <label for="overtimeMultiplier">Fazla Mesai Çarpanı</label>
+          <input type="number" step="0.1" id="overtimeMultiplier" placeholder="Örn: 1.5 (default)">
+        </div>
+        
+        <div class="input-group">
+          <label for="themeSelect">Tema</label>
+          <select id="themeSelect">
+            <option value="auto">Otomatik</option>
+            <option value="light">Aydınlık</option>
+            <option value="dark">Koyu</option>
+          </select>
+        </div>
+        
+        <div class="buttons">
+          <button class="dark-toggle" onclick="confirmAllReset()" style="flex: 1 1 100%;">
+            <i>⚠️</i> TÜM VERİLERİ SIFIRLA
+          </button>
+        </div>
+      </div>
     </main>
   </div>
 
   <!-- Alt Menü -->
   <nav class="nav">
-    <button onclick="showView('main')">
-      <span class="nav-icon">🏠</span>
-      Ana Sayfa
+    <button onclick="showView('main')" id="navMain" class="active">
+      <span class="nav-icon">📊</span>
+      Takip
     </button>
-    <button onclick="showView('profile')">
-      <span class="nav-icon">👤</span>
-      Profil
+    <button onclick="showView('profile')" id="navProfile">
+      <span class="nav-icon">📈</span>
+      İstatistik
     </button>
-    <button onclick="showView('settings')">
+    <button onclick="showView('settings')" id="navSettings">
       <span class="nav-icon">⚙️</span>
       Ayarlar
     </button>
   </nav>
-
-  <!-- Ses Efektleri (Ses yoksa gizli geçiş) -->
-  <audio id="startSound" style="display:none"></audio>
-  <audio id="stopSound" style="display:none"></audio>
 
   <script>
     // Değişkenler
@@ -322,31 +645,17 @@
     }
 
     // Profil Fotoğrafı
-    const photoUpload = document.getElementById('photoUpload');
     const profilePhoto = document.getElementById('profilePhoto');
     if (localStorage.getItem('profilePhoto')) {
       profilePhoto.src = localStorage.getItem('profilePhoto');
       profilePhoto.style.display = 'block';
     }
-    photoUpload && (photoUpload.onchange = e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        localStorage.setItem('profilePhoto', evt.target.result);
-        profilePhoto.src = evt.target.result;
-        profilePhoto.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    });
 
     // İsim İsteme
     if (!name) {
       name = prompt("Hoş geldiniz! Lütfen adınızı ve soyadınızı girin:");
       if (name) localStorage.setItem('username', name);
     }
-    document.getElementById('displayName') && (document.getElementById('displayName').innerText = name || '');
-    document.getElementById('displayName') && (document.getElementById('displayName').style.display = 'block');
 
     // Eleman referansları
     const salaryInput       = document.getElementById('salary');
@@ -358,8 +667,8 @@
     const exchangeRateInput = document.getElementById('exchangeRate');
     const overtimeInput     = document.getElementById('overtimeMultiplier');
     const themeSelect       = document.getElementById('themeSelect');
-    const chartRangeSelect  = document.getElementById('chartRange');
-
+    const notification      = document.getElementById('notification');
+    
     // Kayıtlı değerleri yükle
     salaryInput && (salaryInput.value = localStorage.getItem('salary') || '');
     extraHoursInput && (extraHoursInput.value = localStorage.getItem('extraHours') || 0);
@@ -388,6 +697,17 @@
     });
     applyTheme();
 
+    // Bildirim gösterme
+    function showNotification(message, isError = false) {
+      notification.innerText = message;
+      notification.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      notification.classList.add('show');
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
     // Input değişimlerini kaydet
     salaryInput       && (salaryInput.onchange       = () => localStorage.setItem('salary', salaryInput.value));
     extraHoursInput   && (extraHoursInput.onchange   = () => localStorage.setItem('extraHours', extraHoursInput.value));
@@ -395,6 +715,7 @@
     dailyGoalInput    && (dailyGoalInput.onchange    = () => {
       localStorage.setItem('dailyGoal', dailyGoalInput.value);
       goal = parseFloat(dailyGoalInput.value);
+      updateProgressBar();
     });
     currencySelect    && (currencySelect.onchange     = () => {
       currency = currencySelect.value;
@@ -411,11 +732,12 @@
     overtimeInput     && (overtimeInput.onchange      = () => {
       overtimeMultiplier = parseFloat(overtimeInput.value) || 1.5;
       localStorage.setItem('overtimeMultiplier', overtimeMultiplier);
+      updateDisplay();
     });
     monthlyLimitInput && (monthlyLimitInput.onchange  = () => {
       const val = parseFloat(monthlyLimitInput.value);
       if (isNaN(val) || val <= 0) {
-        alert("Lütfen aylık çalışma süresi limiti için geçerli bir sayı girin (0’dan büyük).");
+        showNotification("Lütfen geçerli bir aylık limit girin", true);
         monthlyLimitInput.value = monthlyLimit;
         return;
       }
@@ -424,9 +746,6 @@
       updateDisplay();
       drawChart();
     });
-
-    const startSound = document.getElementById('startSound');
-    const stopSound  = document.getElementById('stopSound');
 
     // Yardımcı: geçerli toplam saniyeyi al (mola süresini çıkararak)
     function getCurrentSeconds() {
@@ -461,40 +780,59 @@
       };
     }
 
-    // Günlük hedef kontrolü (her gün sadece bir kez)
+    // Günlük hedef kontrolü
     function checkDailyGoal(totalSec) {
       const todayKey = new Date().toISOString().split('T')[0];
       const alreadyNotified = localStorage.getItem('goalCongrats_' + todayKey);
       const hoursWorked = totalSec / 3600;
       if (hoursWorked >= goal && !alreadyNotified) {
-        alert('🎉 Tebrikler! Günlük hedefi aştınız.');
+        showNotification('🎉 Tebrikler! Günlük hedefi aştınız.');
         localStorage.setItem('goalCongrats_' + todayKey, 'true');
       }
+    }
+    
+    // İlerleme çubuğunu güncelle
+    function updateProgressBar() {
+      const totalSec = getCurrentSeconds();
+      const hoursWorked = totalSec / 3600;
+      const progress = Math.min((hoursWorked / goal) * 100, 100);
+      document.getElementById('dailyProgress').style.width = `${progress}%`;
+      document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
     }
 
     function updateDisplay() {
       const totalSec = getCurrentSeconds();
       const { total, regular, overtime } = calculateEarnings(totalSec);
-      document.getElementById('earnings').innerText = total.toFixed(2).replace('.', ',') + ' ' + currency;
-      document.getElementById('earningsDetail').innerText =
-        `Normal: ${regular.toFixed(2).replace('.', ',')} TL  |  Fazla Mesai: ${overtime.toFixed(2).replace('.', ',')} TL`;
+      
+      // Formatlı gösterim
+      const formatCurrency = (value) => {
+        return value.toLocaleString('tr-TR', { 
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }) + ' ' + currency;
+      };
+      
+      document.getElementById('earnings').innerText = formatCurrency(total);
+      document.getElementById('regularEarnings').innerText = formatCurrency(regular);
+      document.getElementById('overtimeEarnings').innerText = formatCurrency(overtime);
 
       // Toplam süre hesaplama
       const hours = Math.floor(totalSec / 3600);
       const remAfterHours = totalSec - hours * 3600;
       const minutes = Math.floor(remAfterHours / 60);
-      const seconds = remAfterHours - minutes * 60;
-      document.getElementById('timeDisplay').innerText =
-        `Toplam Süre: ${hours} saat ${minutes} dakika ${seconds} saniye`;
+      document.getElementById('timeDisplay').innerText = `${hours} saat ${minutes} dakika`;
 
       // Fazla mesai süresi
       const limitSec = monthlyLimit * 3600;
       const extraTime = totalSec > limitSec ? (totalSec - limitSec) : 0;
       const ehours = Math.floor(extraTime / 3600);
       const eminutes = Math.floor((extraTime - ehours * 3600) / 60);
-      const eseconds = extraTime - ehours * 3600 - eminutes * 60;
-      document.getElementById('overtimeDisplay').innerText =
-        `Fazla Mesai: ${ehours} saat ${eminutes} dakika ${eseconds} saniye`;
+      document.getElementById('overtimeDisplay').innerText = `${ehours} saat ${eminutes} dakika`;
+
+      // Mola süresi
+      const breakHours = Math.floor(accumulatedBreakSeconds / 3600);
+      const breakMinutes = Math.floor((accumulatedBreakSeconds - breakHours * 3600) / 60);
+      document.getElementById('breakDisplay').innerText = `${breakHours} saat ${breakMinutes} dakika`;
 
       // Kalan aylık süre
       const remainingSec = limitSec - totalSec;
@@ -502,13 +840,13 @@
         const rh = Math.floor(remainingSec / 3600);
         const remRem = remainingSec - rh * 3600;
         const rm = Math.floor(remRem / 60);
-        document.getElementById('remainingTime').innerText =
-          `Aylık limitten kalan süre: ${rh} saat ${rm} dakika`;
+        document.getElementById('remainingTime').innerText = `Aylık limitten kalan süre: ${rh} saat ${rm} dakika`;
       } else {
         document.getElementById('remainingTime').innerText = "Aylık limit aşıldı.";
       }
 
       checkDailyGoal(totalSec);
+      updateProgressBar();
     }
 
     function startTracking() {
@@ -516,20 +854,16 @@
 
       const salary = parseFloat(salaryInput.value);
       if (isNaN(salary) || salary <= 0) {
-        alert("Lütfen geçerli bir maaş bilgisi girin.");
+        showNotification("Lütfen geçerli bir maaş bilgisi girin", true);
         return;
       }
 
-      // Eğer daha önce sayfa yenilendiyse ve hala moladaysa, butonu doğru duruma getir
+      // Buton durumunu güncelle
       const btn = document.getElementById('breakButton');
       if (isOnBreak) {
-        btn.innerText = "MOLADAN DÖN";
-        btn.style.background = "#FF9800";
-        btn.style.color = "#fff";
+        btn.innerHTML = '<i>⏸️</i> MOLADAN DÖN';
       } else {
-        btn.innerText = "MOLA";
-        btn.style.background = "";
-        btn.style.color = "";
+        btn.innerHTML = '<i>⏸️</i> MOLA';
       }
 
       // "Ek Süre" yalnızca bir kez eklenir, sonrasında kutuyu sıfırla
@@ -545,8 +879,7 @@
         localStorage.setItem('extraMinutes', 0);
       }
 
-      startSound.currentTime = 0;
-      startSound.play().catch(()=>{});
+      showNotification('Çalışma başlatıldı');
 
       startTimestamp = Math.floor(Date.now() / 1000);
       isRunning = true;
@@ -582,13 +915,10 @@
         localStorage.removeItem('breakStartTimestamp');
         // Butonu temizle
         const btn = document.getElementById('breakButton');
-        btn.innerText = "MOLA";
-        btn.style.background = "";
-        btn.style.color = "";
+        btn.innerHTML = '<i>⏸️</i> MOLA';
       }
 
-      stopSound.currentTime = 0;
-      stopSound.play().catch(()=>{});
+      showNotification('Çalışma durduruldu');
       clearInterval(timer);
 
       const now = Math.floor(Date.now() / 1000);
@@ -611,7 +941,7 @@
 
     function toggleBreak() {
       if (!isRunning) {
-        alert("Önce çalışmayı başlatın, sonra mola verebilirsiniz.");
+        showNotification("Önce çalışmayı başlatın", true);
         return;
       }
 
@@ -624,9 +954,8 @@
         breakStartTimestamp = now;
         localStorage.setItem('breakStartTimestamp', breakStartTimestamp);
         localStorage.setItem('isOnBreak', 'true');
-        btn.innerText = "MOLADAN DÖN";
-        btn.style.background = "#FF9800";
-        btn.style.color = "#fff";
+        btn.innerHTML = '<i>▶️</i> MOLADAN DÖN';
+        showNotification('Mola başlatıldı');
       } else {
         // Mola Bitiriliyor
         const thisBreak = now - breakStartTimestamp;
@@ -635,9 +964,8 @@
         localStorage.removeItem('breakStartTimestamp');
         isOnBreak = false;
         localStorage.setItem('isOnBreak', 'false');
-        btn.innerText = "MOLA";
-        btn.style.background = "";
-        btn.style.color = "";
+        btn.innerHTML = '<i>⏸️</i> MOLA';
+        showNotification('Mola sonlandırıldı');
         updateDisplay();
       }
     }
@@ -645,6 +973,7 @@
     function confirmDailyReset() {
       if (confirm("Bu günün verileri silinecek. Emin misiniz?")) {
         resetDaily();
+        showNotification('Günlük veriler sıfırlandı');
       }
     }
 
@@ -654,8 +983,10 @@
       localStorage.removeItem('goalCongrats_' + todayKey);
       baseSeconds = 0;
       earnings = 0;
+      accumulatedBreakSeconds = 0;
       localStorage.setItem('baseSeconds', 0);
       localStorage.setItem('earnings', 0);
+      localStorage.setItem('accumulatedBreakSeconds', 0);
       if (isRunning) {
         startTimestamp = Math.floor(Date.now() / 1000);
         localStorage.setItem('startTimestamp', startTimestamp);
@@ -665,8 +996,9 @@
     }
 
     function confirmAllReset() {
-      if (confirm("Uygulamadaki tüm veriler silinecek. Emin misiniz?")) {
+      if (confirm("Uygulamadaki TÜM veriler silinecek. Emin misiniz?")) {
         resetAll();
+        showNotification('Tüm veriler sıfırlandı');
       }
     }
 
@@ -679,6 +1011,7 @@
     function toggleDarkMode() {
       document.body.classList.toggle('dark');
       localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+      showNotification(document.body.classList.contains('dark') ? 'Koyu tema etkin' : 'Açık tema etkin');
     }
 
     function showView(view) {
@@ -686,11 +1019,14 @@
       document.getElementById('profileView').classList.add('hidden');
       document.getElementById('settingsView').classList.add('hidden');
       document.getElementById(view + 'View').classList.remove('hidden');
+      
+      // Nav aktif durumunu güncelle
+      document.getElementById('navMain').classList.remove('active');
+      document.getElementById('navProfile').classList.remove('active');
+      document.getElementById('navSettings').classList.remove('active');
+      document.getElementById('nav' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+      
       if (view === 'profile') drawAllCharts();
-    }
-
-    function formatNumber(val) {
-      return val.toLocaleString('tr-TR', { minimumFractionDigits: 2 });
     }
 
     // Grafik çizme: Çalışma, Boşta, Kazanç
@@ -716,19 +1052,35 @@
       }
       if (workChart) workChart.destroy();
       workChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: labels,
           datasets: [{
             label: 'Çalışılan Saat',
             data: data,
-            borderColor: 'var(--work-color)',
-            backgroundColor: 'rgba(26, 115, 232, 0.3)',
-            fill: true,
-            tension: 0.3
+            backgroundColor: 'var(--work-color)',
+            borderColor: 'var(--accent)',
+            borderWidth: 1,
+            borderRadius: 5,
           }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: { 
+          responsive: true,
+          scales: { 
+            y: { 
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+              ticks: { color: 'var(--text)' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: 'var(--text)' }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: 'var(--text)' } }
+          }
+        }
       });
     }
 
@@ -749,19 +1101,35 @@
       }
       if (idleChart) idleChart.destroy();
       idleChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
           labels: labels,
           datasets: [{
             label: 'Boşta Kalan Saat',
             data: data,
-            borderColor: 'var(--idle-color)',
-            backgroundColor: 'rgba(232, 26, 26, 0.3)',
-            fill: true,
-            tension: 0.3
+            backgroundColor: 'var(--idle-color)',
+            borderColor: 'var(--danger)',
+            borderWidth: 1,
+            borderRadius: 5,
           }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: { 
+          responsive: true,
+          scales: { 
+            y: { 
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+              ticks: { color: 'var(--text)' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: 'var(--text)' }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: 'var(--text)' } }
+          }
+        }
       });
     }
 
@@ -786,30 +1154,42 @@
             label: 'Kazanılan (' + currency + ')',
             data: data,
             borderColor: 'var(--earn-color)',
-            backgroundColor: 'rgba(26, 232, 26, 0.3)',
+            backgroundColor: 'rgba(26, 232, 26, 0.1)',
+            borderWidth: 3,
+            tension: 0.2,
             fill: true,
-            tension: 0.3
+            pointBackgroundColor: 'var(--success)',
+            pointRadius: 5,
+            pointHoverRadius: 8
           }]
         },
-        options: { scales: { y: { beginAtZero: true } } }
+        options: { 
+          responsive: true,
+          scales: { 
+            y: { 
+              beginAtZero: true,
+              grid: { color: 'rgba(255, 255, 255, 0.1)' },
+              ticks: { color: 'var(--text)' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: 'var(--text)' }
+            }
+          },
+          plugins: {
+            legend: { labels: { color: 'var(--text)' } }
+          }
+        }
       });
-    }
-
-    function convertCurrency(val) {
-      return currency === 'TL' ? val : +(val / exchangeRate).toFixed(2);
     }
 
     window.onload = () => {
       const btn = document.getElementById('breakButton');
       if (btn) {
         if (isOnBreak) {
-          btn.innerText = "MOLADAN DÖN";
-          btn.style.background = "#FF9800";
-          btn.style.color = "#fff";
+          btn.innerHTML = '<i>▶️</i> MOLADAN DÖN';
         } else {
-          btn.innerText = "MOLA";
-          btn.style.background = "";
-          btn.style.color = "";
+          btn.innerHTML = '<i>⏸️</i> MOLA';
         }
       }
 
@@ -837,8 +1217,44 @@
         const currentSec = parseInt(localStorage.getItem('dailySeconds_' + todayKey)) || 0;
         updateDisplay();
       }
-      drawAllCharts();
+      
+      // İlk görünümde ilerleme çubuğunu güncelle
+      updateProgressBar();
+      
+      // Tooltip'ler için başlık ekleme
+      document.querySelectorAll('.info-tooltip').forEach(el => {
+        const title = el.getAttribute('title');
+        if (title) {
+          el.removeAttribute('title');
+          el.addEventListener('click', () => {
+            showNotification(title);
+          });
+        }
+      });
+      
+      // Odağı maaş alanına ver
+      salaryInput.focus();
     };
+    
+    // Klavye kısayolları
+    document.addEventListener('keydown', (e) => {
+      // Boşluk tuşu: Başlat/Durdur
+      if (e.key === ' ') {
+        if (isRunning) stopTracking();
+        else startTracking();
+        e.preventDefault();
+      }
+      // B tuşu: Mola
+      else if (e.key === 'b' || e.key === 'B') {
+        toggleBreak();
+        e.preventDefault();
+      }
+      // R tuşu: Sıfırla
+      else if (e.key === 'r' || e.key === 'R') {
+        confirmDailyReset();
+        e.preventDefault();
+      }
+    });
   </script>
 </body>
 </html>
