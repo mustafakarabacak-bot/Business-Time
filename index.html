@@ -4,10 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Business Time</title>
-  <!-- PWA manifest ve ikon -->
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png">
-  <!-- Chart.js (HTTPS ile yükleniyor) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -441,10 +439,8 @@
   </style>
 </head>
 <body>
-  <!-- Bildirim -->
   <div class="notification" id="notification">Bildirim Mesajı</div>
   
-  <!-- Header -->
   <header>
     <div class="logo-container">
       <img src="icon.png" class="logo" alt="Business Time Logo" />
@@ -455,9 +451,7 @@
     </div>
   </header>
 
-  <!-- Container -->
   <div class="container">
-    <!-- Ana Sayfa -->
     <main id="mainView">
       <h2 class="section-title">İş Takip Paneli</h2>
       
@@ -535,7 +529,6 @@
       </div>
     </main>
 
-    <!-- Profil -->
     <main id="profileView" class="hidden">
       <h2 class="section-title">İstatistikler</h2>
       
@@ -555,7 +548,6 @@
       </div>
     </main>
 
-    <!-- Ayarlar -->
     <main id="settingsView" class="hidden">
       <h2 class="section-title">Ayarlar</h2>
       
@@ -597,7 +589,6 @@
     </main>
   </div>
 
-  <!-- Alt Menü -->
   <nav class="nav">
     <button onclick="showView('main')" id="navMain" class="active">
       <span class="nav-icon">📊</span>
@@ -888,6 +879,7 @@
 
       updateDisplay();
 
+      // *** DEĞİŞİKLİK: Interval 1000'den 100'e düşürüldü. ***
       timer = setInterval(() => {
         const now = Math.floor(Date.now() / 1000);
         const totalSec = getCurrentSeconds();
@@ -898,7 +890,7 @@
         localStorage.setItem('dailySeconds_' + todayKey, totalSec);
         localStorage.setItem('earnings', earnings);
         updateDisplay();
-      }, 1000);
+      }, 100);
     }
 
     function stopTracking() {
@@ -1198,6 +1190,8 @@
         baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
         accumulatedBreakSeconds = parseInt(localStorage.getItem('accumulatedBreakSeconds')) || 0;
         isRunning = true;
+        
+        // *** DEĞİŞİKLİK: Interval 1000'den 100'e düşürüldü. ***
         timer = setInterval(() => {
           const totalSec = getCurrentSeconds();
           const { total: earn } = calculateEarnings(totalSec);
@@ -1208,7 +1202,7 @@
           localStorage.setItem('earnings', earnings);
           updateDisplay();
           if ((totalSec / 3600) >= goal) checkDailyGoal(totalSec);
-        }, 1000);
+        }, 100);
       } else {
         baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
         accumulatedBreakSeconds = parseInt(localStorage.getItem('accumulatedBreakSeconds')) || 0;
@@ -1239,18 +1233,18 @@
     // Klavye kısayolları
     document.addEventListener('keydown', (e) => {
       // Boşluk tuşu: Başlat/Durdur
-      if (e.key === ' ') {
+      if (e.key === ' ' && e.target.tagName !== 'INPUT') {
         if (isRunning) stopTracking();
         else startTracking();
         e.preventDefault();
       }
       // B tuşu: Mola
-      else if (e.key === 'b' || e.key === 'B') {
+      else if ((e.key === 'b' || e.key === 'B') && e.target.tagName !== 'INPUT') {
         toggleBreak();
         e.preventDefault();
       }
       // R tuşu: Sıfırla
-      else if (e.key === 'r' || e.key === 'R') {
+      else if ((e.key === 'r' || e.key === 'R') && e.target.tagName !== 'INPUT') {
         confirmDailyReset();
         e.preventDefault();
       }
