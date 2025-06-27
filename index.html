@@ -496,7 +496,7 @@
         </button>
       </div>
       
-      <div class="earnings-box" id="earnings">0,00 TL</div>
+      <div class="earnings-box" id="earnings">0,0000 TL</div>
       
       <div class="earnings-detail">
         <div>Normal Kazanç: <span id="regularEarnings">0,00 TL</span></div>
@@ -753,7 +753,7 @@
       return baseSeconds - accumulatedBreakSeconds;
     }
 
-    // Fazla mesai ayrımı ve kazanç hesaplama
+    // *** DEĞİŞİKLİK: Kazanç hesaplama fonksiyonu yuvarlama yapmadan tam hassasiyetle değer döndürür ***
     function calculateEarnings(totalSec) {
       if (!monthlyLimit || monthlyLimit <= 0) return { total: 0, regular: 0, overtime: 0 };
       const salary = parseFloat(salaryInput.value);
@@ -762,10 +762,10 @@
       const limitSec = monthlyLimit * 3600;
       const regularSeconds = Math.min(totalSec, limitSec);
       const overtimeSeconds = Math.max(totalSec - limitSec, 0);
-      const regularEarnings = +(regularSeconds * (hourlyRate / 3600)).toFixed(2);
-      const overtimeEarnings = +(overtimeSeconds * (hourlyRate / 3600) * overtimeMultiplier).toFixed(2);
+      const regularEarnings = regularSeconds * (hourlyRate / 3600);
+      const overtimeEarnings = overtimeSeconds * (hourlyRate / 3600) * overtimeMultiplier;
       return {
-        total: +(regularEarnings + overtimeEarnings).toFixed(2),
+        total: regularEarnings + overtimeEarnings,
         regular: regularEarnings,
         overtime: overtimeEarnings
       };
@@ -795,17 +795,25 @@
       const totalSec = getCurrentSeconds();
       const { total, regular, overtime } = calculateEarnings(totalSec);
       
-      // Formatlı gösterim
-      const formatCurrency = (value) => {
+      // *** DEĞİŞİKLİK: Para birimi gösterimi 4 ondalık basamağa çıkarıldı. ***
+      const formatMainCurrency = (value) => {
+        return value.toLocaleString('tr-TR', { 
+          minimumFractionDigits: 4,
+          maximumFractionDigits: 4
+        }) + ' ' + currency;
+      };
+
+      // Detaylar için 2 basamak yeterli.
+      const formatDetailCurrency = (value) => {
         return value.toLocaleString('tr-TR', { 
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         }) + ' ' + currency;
       };
       
-      document.getElementById('earnings').innerText = formatCurrency(total);
-      document.getElementById('regularEarnings').innerText = formatCurrency(regular);
-      document.getElementById('overtimeEarnings').innerText = formatCurrency(overtime);
+      document.getElementById('earnings').innerText = formatMainCurrency(total);
+      document.getElementById('regularEarnings').innerText = formatDetailCurrency(regular);
+      document.getElementById('overtimeEarnings').innerText = formatDetailCurrency(overtime);
 
       // Toplam süre hesaplama
       const hours = Math.floor(totalSec / 3600);
@@ -879,7 +887,7 @@
 
       updateDisplay();
 
-      // *** DEĞİŞİKLİK: Interval 1000'den 100'e düşürüldü. ***
+      // *** DEĞİŞİKLİK: Interval 100'den 10'a düşürüldü (daha hızlı güncelleme). ***
       timer = setInterval(() => {
         const now = Math.floor(Date.now() / 1000);
         const totalSec = getCurrentSeconds();
@@ -890,7 +898,7 @@
         localStorage.setItem('dailySeconds_' + todayKey, totalSec);
         localStorage.setItem('earnings', earnings);
         updateDisplay();
-      }, 100);
+      }, 10);
     }
 
     function stopTracking() {
@@ -1191,7 +1199,7 @@
         accumulatedBreakSeconds = parseInt(localStorage.getItem('accumulatedBreakSeconds')) || 0;
         isRunning = true;
         
-        // *** DEĞİŞİKLİK: Interval 1000'den 100'e düşürüldü. ***
+        // *** DEĞİŞİKLİK: Interval 100'den 10'a düşürüldü (daha hızlı güncelleme). ***
         timer = setInterval(() => {
           const totalSec = getCurrentSeconds();
           const { total: earn } = calculateEarnings(totalSec);
@@ -1202,7 +1210,7 @@
           localStorage.setItem('earnings', earnings);
           updateDisplay();
           if ((totalSec / 3600) >= goal) checkDailyGoal(totalSec);
-        }, 100);
+        }, 10);
       } else {
         baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
         accumulatedBreakSeconds = parseInt(localStorage.getItem('accumulatedBreakSeconds')) || 0;
