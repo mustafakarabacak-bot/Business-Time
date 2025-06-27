@@ -607,8 +607,9 @@
   <script>
     // Değişkenler
     let timer;
-    let startTimestamp = parseInt(localStorage.getItem('startTimestamp')) || null;
-    let baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
+    // *** DEĞİŞİKLİK: Tüm zaman birimleri milisaniyeye çevrildi ***
+    let startTimestamp = parseInt(localStorage.getItem('startTimestamp_ms')) || null;
+    let baseMilliseconds = parseInt(localStorage.getItem('baseMilliseconds')) || 0;
     let isRunning = localStorage.getItem('isRunning') === 'true';
     let goal = parseFloat(localStorage.getItem('dailyGoal')) || 8;
     let currency = localStorage.getItem('currency') || 'TL';
@@ -620,18 +621,18 @@
 
     // Mola değişkenleri
     let isOnBreak = localStorage.getItem('isOnBreak') === 'true';
-    let breakStartTimestamp = parseInt(localStorage.getItem('breakStartTimestamp')) || null;
-    let accumulatedBreakSeconds = parseInt(localStorage.getItem('accumulatedBreakSeconds')) || 0;
+    let breakStartTimestamp = parseInt(localStorage.getItem('breakStartTimestamp_ms')) || null;
+    let accumulatedBreakMilliseconds = parseInt(localStorage.getItem('accumulatedBreakMilliseconds')) || 0;
 
     // Ayarlama: Otomatik aylık sıfırlama
     const nowDate = new Date();
     const currentMonthKey = nowDate.getMonth() + '-' + nowDate.getFullYear();
     const storedMonthKey = localStorage.getItem('lastRecordedMonth');
     if (storedMonthKey !== currentMonthKey) {
-      baseSeconds = 0;
-      accumulatedBreakSeconds = 0;
-      localStorage.setItem('baseSeconds', '0');
-      localStorage.setItem('accumulatedBreakSeconds', '0');
+      baseMilliseconds = 0;
+      accumulatedBreakMilliseconds = 0;
+      localStorage.setItem('baseMilliseconds', '0');
+      localStorage.setItem('accumulatedBreakMilliseconds', '0');
       localStorage.setItem('lastRecordedMonth', currentMonthKey);
     }
 
@@ -738,32 +739,40 @@
       drawChart();
     });
 
-    // Yardımcı: geçerli toplam saniyeyi al (mola süresini çıkararak)
+    // *** DEĞİŞİKLİK: Saniye yerine milisaniye hassasiyetinde saniye döndürür ***
     function getCurrentSeconds() {
-      if (isRunning && startTimestamp !== null) {
-        const now = Math.floor(Date.now() / 1000);
-        let rawWork = baseSeconds + (now - startTimestamp);
+        let currentMilliseconds = 0;
+        if (isRunning && startTimestamp !== null) {
+            const now = Date.now();
+            let rawWork = baseMilliseconds + (now - startTimestamp);
 
-        if (isOnBreak && breakStartTimestamp) {
-          const thisBreak = now - breakStartTimestamp;
-          return rawWork - (accumulatedBreakSeconds + thisBreak);
+            if (isOnBreak && breakStartTimestamp) {
+                const thisBreak = now - breakStartTimestamp;
+                currentMilliseconds = rawWork - (accumulatedBreakMilliseconds + thisBreak);
+            } else {
+                currentMilliseconds = rawWork - accumulatedBreakMilliseconds;
+            }
+        } else {
+            currentMilliseconds = baseMilliseconds - accumulatedBreakMilliseconds;
         }
-        return rawWork - accumulatedBreakSeconds;
-      }
-      return baseSeconds - accumulatedBreakSeconds;
+        return currentMilliseconds / 1000; // Saniyeye çevir ama ondalıklı kalsın
     }
 
-    // *** DEĞİŞİKLİK: Kazanç hesaplama fonksiyonu yuvarlama yapmadan tam hassasiyetle değer döndürür ***
     function calculateEarnings(totalSec) {
       if (!monthlyLimit || monthlyLimit <= 0) return { total: 0, regular: 0, overtime: 0 };
       const salary = parseFloat(salaryInput.value);
       if (isNaN(salary)) return { total: 0, regular: 0, overtime: 0 };
+      
       const hourlyRate = salary / monthlyLimit;
+      const ratePerSecond = hourlyRate / 3600;
+
       const limitSec = monthlyLimit * 3600;
       const regularSeconds = Math.min(totalSec, limitSec);
       const overtimeSeconds = Math.max(totalSec - limitSec, 0);
-      const regularEarnings = regularSeconds * (hourlyRate / 3600);
-      const overtimeEarnings = overtimeSeconds * (hourlyRate / 3600) * overtimeMultiplier;
+
+      const regularEarnings = regularSeconds * ratePerSecond;
+      const overtimeEarnings = overtimeSeconds * ratePerSecond * overtimeMultiplier;
+      
       return {
         total: regularEarnings + overtimeEarnings,
         regular: regularEarnings,
@@ -771,7 +780,6 @@
       };
     }
 
-    // Günlük hedef kontrolü
     function checkDailyGoal(totalSec) {
       const todayKey = new Date().toISOString().split('T')[0];
       const alreadyNotified = localStorage.getItem('goalCongrats_' + todayKey);
@@ -782,7 +790,6 @@
       }
     }
     
-    // İlerleme çubuğunu güncelle
     function updateProgressBar() {
       const totalSec = getCurrentSeconds();
       const hoursWorked = totalSec / 3600;
@@ -795,15 +802,13 @@
       const totalSec = getCurrentSeconds();
       const { total, regular, overtime } = calculateEarnings(totalSec);
       
-      // *** DEĞİŞİKLİK: Para birimi gösterimi 4 ondalık basamağa çıkarıldı. ***
       const formatMainCurrency = (value) => {
         return value.toLocaleString('tr-TR', { 
           minimumFractionDigits: 4,
           maximumFractionDigits: 4
         }) + ' ' + currency;
       };
-
-      // Detaylar için 2 basamak yeterli.
+      
       const formatDetailCurrency = (value) => {
         return value.toLocaleString('tr-TR', { 
           minimumFractionDigits: 2,
@@ -815,30 +820,27 @@
       document.getElementById('regularEarnings').innerText = formatDetailCurrency(regular);
       document.getElementById('overtimeEarnings').innerText = formatDetailCurrency(overtime);
 
-      // Toplam süre hesaplama
       const hours = Math.floor(totalSec / 3600);
-      const remAfterHours = totalSec - hours * 3600;
+      const remAfterHours = totalSec % 3600;
       const minutes = Math.floor(remAfterHours / 60);
       document.getElementById('timeDisplay').innerText = `${hours} saat ${minutes} dakika`;
 
-      // Fazla mesai süresi
       const limitSec = monthlyLimit * 3600;
       const extraTime = totalSec > limitSec ? (totalSec - limitSec) : 0;
       const ehours = Math.floor(extraTime / 3600);
-      const eminutes = Math.floor((extraTime - ehours * 3600) / 60);
+      const eminutes = Math.floor((extraTime % 3600) / 60);
       document.getElementById('overtimeDisplay').innerText = `${ehours} saat ${eminutes} dakika`;
-
-      // Mola süresi
-      const breakHours = Math.floor(accumulatedBreakSeconds / 3600);
-      const breakMinutes = Math.floor((accumulatedBreakSeconds - breakHours * 3600) / 60);
+      
+      // *** DEĞİŞİKLİK: Mola süresi milisaniyeden hesaplanıyor ***
+      const totalBreakSeconds = accumulatedBreakMilliseconds / 1000;
+      const breakHours = Math.floor(totalBreakSeconds / 3600);
+      const breakMinutes = Math.floor((totalBreakSeconds % 3600) / 60);
       document.getElementById('breakDisplay').innerText = `${breakHours} saat ${breakMinutes} dakika`;
 
-      // Kalan aylık süre
       const remainingSec = limitSec - totalSec;
       if (remainingSec > 0) {
         const rh = Math.floor(remainingSec / 3600);
-        const remRem = remainingSec - rh * 3600;
-        const rm = Math.floor(remRem / 60);
+        const rm = Math.floor((remainingSec % 3600) / 60);
         document.getElementById('remainingTime').innerText = `Aylık limitten kalan süre: ${rh} saat ${rm} dakika`;
       } else {
         document.getElementById('remainingTime').innerText = "Aylık limit aşıldı.";
@@ -856,22 +858,14 @@
         showNotification("Lütfen geçerli bir maaş bilgisi girin", true);
         return;
       }
-
-      // Buton durumunu güncelle
+      
       const btn = document.getElementById('breakButton');
-      if (isOnBreak) {
-        btn.innerHTML = '<i>⏸️</i> MOLADAN DÖN';
-      } else {
-        btn.innerHTML = '<i>⏸️</i> MOLA';
-      }
+      btn.innerHTML = isOnBreak ? '<i>▶️</i> MOLADAN DÖN' : '<i>⏸️</i> MOLA';
 
-      // "Ek Süre" yalnızca bir kez eklenir, sonrasında kutuyu sıfırla
-      if (!isRunning && baseSeconds === parseInt(localStorage.getItem('baseSeconds') || '0')) {
-        const extraSec = ((+extraHoursInput.value || 0) * 3600) +
-                         ((+extraMinutesInput.value || 0) * 60);
-        baseSeconds += extraSec;
-        localStorage.setItem('baseSeconds', baseSeconds);
-        // Ek süre kutularını sıfırla
+      if (!isRunning && baseMilliseconds === parseInt(localStorage.getItem('baseMilliseconds') || '0')) {
+        const extraMs = (((+extraHoursInput.value || 0) * 3600) + ((+extraMinutesInput.value || 0) * 60)) * 1000;
+        baseMilliseconds += extraMs;
+        localStorage.setItem('baseMilliseconds', baseMilliseconds);
         extraHoursInput.value = 0;
         extraMinutesInput.value = 0;
         localStorage.setItem('extraHours', 0);
@@ -880,51 +874,50 @@
 
       showNotification('Çalışma başlatıldı');
 
-      startTimestamp = Math.floor(Date.now() / 1000);
+      // *** DEĞİŞİKLİK: Zaman damgası milisaniye olarak alınıyor ***
+      startTimestamp = Date.now();
       isRunning = true;
-      localStorage.setItem('startTimestamp', startTimestamp);
+      localStorage.setItem('startTimestamp_ms', startTimestamp);
       localStorage.setItem('isRunning', 'true');
 
       updateDisplay();
-
-      // *** DEĞİŞİKLİK: Interval 100'den 10'a düşürüldü (daha hızlı güncelleme). ***
+      
+      // Akıcı güncelleme için interval
       timer = setInterval(() => {
-        const now = Math.floor(Date.now() / 1000);
         const totalSec = getCurrentSeconds();
         const { total: earn } = calculateEarnings(totalSec);
         earnings = earn;
+        
         const todayKey = new Date().toISOString().split('T')[0];
         localStorage.setItem('daily_' + todayKey, earnings);
         localStorage.setItem('dailySeconds_' + todayKey, totalSec);
         localStorage.setItem('earnings', earnings);
+
         updateDisplay();
-      }, 10);
+      }, 50); // 50ms (saniyede 20 güncelleme) akıcı bir his için yeterlidir.
     }
 
     function stopTracking() {
       if (!isRunning) return;
-
-      // Eğer moladaysa, molayı bitir
+      
+      const now = Date.now();
       if (isOnBreak && breakStartTimestamp) {
-        const now = Math.floor(Date.now()/1000);
         const thisBreak = now - breakStartTimestamp;
-        accumulatedBreakSeconds += thisBreak;
-        localStorage.setItem('accumulatedBreakSeconds', accumulatedBreakSeconds);
+        accumulatedBreakMilliseconds += thisBreak;
+        localStorage.setItem('accumulatedBreakMilliseconds', accumulatedBreakMilliseconds);
         isOnBreak = false;
         localStorage.setItem('isOnBreak', 'false');
-        localStorage.removeItem('breakStartTimestamp');
-        // Butonu temizle
-        const btn = document.getElementById('breakButton');
-        btn.innerHTML = '<i>⏸️</i> MOLA';
+        localStorage.removeItem('breakStartTimestamp_ms');
+        document.getElementById('breakButton').innerHTML = '<i>⏸️</i> MOLA';
       }
 
       showNotification('Çalışma durduruldu');
       clearInterval(timer);
-
-      const now = Math.floor(Date.now() / 1000);
-      const totalRaw = baseSeconds + (now - startTimestamp);
-      baseSeconds = totalRaw;
-      localStorage.setItem('baseSeconds', baseSeconds);
+      
+      // *** DEĞİŞİKLİK: Kalan süre milisaniye olarak ekleniyor ***
+      const elapsed = now - startTimestamp;
+      baseMilliseconds += elapsed;
+      localStorage.setItem('baseMilliseconds', baseMilliseconds);
 
       const totalSec = getCurrentSeconds();
       const { total: earn } = calculateEarnings(totalSec);
@@ -932,10 +925,12 @@
       localStorage.setItem('earnings', earnings);
       const todayKey = new Date().toISOString().split('T')[0];
       localStorage.setItem('daily_' + todayKey, earnings);
+      localStorage.setItem('dailySeconds_' + todayKey, totalSec);
 
       isRunning = false;
       localStorage.setItem('isRunning', 'false');
-
+      localStorage.removeItem('startTimestamp_ms');
+      
       updateDisplay();
     }
 
@@ -944,24 +939,24 @@
         showNotification("Önce çalışmayı başlatın", true);
         return;
       }
-
-      const now = Math.floor(Date.now() / 1000);
+      
+      const now = Date.now();
       const btn = document.getElementById('breakButton');
 
       if (!isOnBreak) {
-        // Mola Başlatılıyor
         isOnBreak = true;
         breakStartTimestamp = now;
-        localStorage.setItem('breakStartTimestamp', breakStartTimestamp);
+        localStorage.setItem('breakStartTimestamp_ms', breakStartTimestamp);
         localStorage.setItem('isOnBreak', 'true');
         btn.innerHTML = '<i>▶️</i> MOLADAN DÖN';
         showNotification('Mola başlatıldı');
       } else {
-        // Mola Bitiriliyor
         const thisBreak = now - breakStartTimestamp;
-        accumulatedBreakSeconds += thisBreak;
-        localStorage.setItem('accumulatedBreakSeconds', accumulatedBreakSeconds);
-        localStorage.removeItem('breakStartTimestamp');
+        accumulatedBreakMilliseconds += thisBreak;
+        localStorage.setItem('accumulatedBreakMilliseconds', accumulatedBreakMilliseconds);
+        
+        breakStartTimestamp = null;
+        localStorage.removeItem('breakStartTimestamp_ms');
         isOnBreak = false;
         localStorage.setItem('isOnBreak', 'false');
         btn.innerHTML = '<i>⏸️</i> MOLA';
@@ -980,23 +975,28 @@
     function resetDaily() {
       const todayKey = new Date().toISOString().split('T')[0];
       localStorage.removeItem('daily_' + todayKey);
+      localStorage.removeItem('dailySeconds_' + todayKey);
       localStorage.removeItem('goalCongrats_' + todayKey);
-      baseSeconds = 0;
+      
+      baseMilliseconds = 0;
       earnings = 0;
-      accumulatedBreakSeconds = 0;
-      localStorage.setItem('baseSeconds', 0);
+      accumulatedBreakMilliseconds = 0;
+      localStorage.setItem('baseMilliseconds', 0);
       localStorage.setItem('earnings', 0);
-      localStorage.setItem('accumulatedBreakSeconds', 0);
+      localStorage.setItem('accumulatedBreakMilliseconds', 0);
+      
       if (isRunning) {
-        startTimestamp = Math.floor(Date.now() / 1000);
-        localStorage.setItem('startTimestamp', startTimestamp);
+        startTimestamp = Date.now();
+        localStorage.setItem('startTimestamp_ms', startTimestamp);
       }
       updateDisplay();
-      drawAllCharts();
+      if (document.getElementById('profileView').classList.contains('hidden') === false) {
+        drawAllCharts();
+      }
     }
 
     function confirmAllReset() {
-      if (confirm("Uygulamadaki TÜM veriler silinecek. Emin misiniz?")) {
+      if (confirm("Uygulamadaki TÜM veriler silinecek. Bu işlem geri alınamaz. Emin misiniz?")) {
         resetAll();
         showNotification('Tüm veriler sıfırlandı');
       }
@@ -1020,7 +1020,6 @@
       document.getElementById('settingsView').classList.add('hidden');
       document.getElementById(view + 'View').classList.remove('hidden');
       
-      // Nav aktif durumunu güncelle
       document.getElementById('navMain').classList.remove('active');
       document.getElementById('navProfile').classList.remove('active');
       document.getElementById('navSettings').classList.remove('active');
@@ -1029,7 +1028,6 @@
       if (view === 'profile') drawAllCharts();
     }
 
-    // Grafik çizme: Çalışma, Boşta, Kazanç
     let workChart, idleChart, earnChart;
     function drawAllCharts() {
       drawWorkChart();
@@ -1047,7 +1045,7 @@
         d.setDate(today.getDate() - i);
         const key = d.toISOString().split('T')[0];
         labels.push(key.slice(5));
-        const daySec = parseInt(localStorage.getItem('dailySeconds_' + key)) || 0;
+        const daySec = parseFloat(localStorage.getItem('dailySeconds_' + key)) || 0;
         data.push(parseFloat((daySec / 3600).toFixed(2)));
       }
       if (workChart) workChart.destroy();
@@ -1064,23 +1062,7 @@
             borderRadius: 5,
           }]
         },
-        options: { 
-          responsive: true,
-          scales: { 
-            y: { 
-              beginAtZero: true,
-              grid: { color: 'rgba(255, 255, 255, 0.1)' },
-              ticks: { color: 'var(--text)' }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { color: 'var(--text)' }
-            }
-          },
-          plugins: {
-            legend: { labels: { color: 'var(--text)' } }
-          }
-        }
+        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: 'var(--text)' } }, x: { ticks: { color: 'var(--text)' } } }, plugins: { legend: { labels: { color: 'var(--text)' } } } }
       });
     }
 
@@ -1095,7 +1077,7 @@
         d.setDate(today.getDate() - i);
         const key = d.toISOString().split('T')[0];
         labels.push(key.slice(5));
-        const daySec = parseInt(localStorage.getItem('dailySeconds_' + key)) || 0;
+        const daySec = parseFloat(localStorage.getItem('dailySeconds_' + key)) || 0;
         const idleSec = Math.max(dailyLimitSec - daySec, 0);
         data.push(parseFloat((idleSec / 3600).toFixed(2)));
       }
@@ -1113,26 +1095,10 @@
             borderRadius: 5,
           }]
         },
-        options: { 
-          responsive: true,
-          scales: { 
-            y: { 
-              beginAtZero: true,
-              grid: { color: 'rgba(255, 255, 255, 0.1)' },
-              ticks: { color: 'var(--text)' }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { color: 'var(--text)' }
-            }
-          },
-          plugins: {
-            legend: { labels: { color: 'var(--text)' } }
-          }
-        }
+        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: 'var(--text)' } }, x: { ticks: { color: 'var(--text)' } } }, plugins: { legend: { labels: { color: 'var(--text)' } } } }
       });
     }
-
+    
     function drawEarnChart() {
       const ctx = document.getElementById('earningsChart').getContext('2d');
       const labels = [];
@@ -1163,99 +1129,47 @@
             pointHoverRadius: 8
           }]
         },
-        options: { 
-          responsive: true,
-          scales: { 
-            y: { 
-              beginAtZero: true,
-              grid: { color: 'rgba(255, 255, 255, 0.1)' },
-              ticks: { color: 'var(--text)' }
-            },
-            x: {
-              grid: { display: false },
-              ticks: { color: 'var(--text)' }
-            }
-          },
-          plugins: {
-            legend: { labels: { color: 'var(--text)' } }
-          }
-        }
+        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: 'var(--text)' } }, x: { ticks: { color: 'var(--text)' } } }, plugins: { legend: { labels: { color: 'var(--text)' } } } }
       });
     }
 
     window.onload = () => {
-      const btn = document.getElementById('breakButton');
-      if (btn) {
-        if (isOnBreak) {
-          btn.innerHTML = '<i>▶️</i> MOLADAN DÖN';
-        } else {
-          btn.innerHTML = '<i>⏸️</i> MOLA';
-        }
-      }
+      document.getElementById('breakButton').innerHTML = isOnBreak ? '<i>▶️</i> MOLADAN DÖN' : '<i>⏸️</i> MOLA';
 
-      if (localStorage.getItem('isRunning') === 'true') {
-        startTimestamp = parseInt(localStorage.getItem('startTimestamp')) || null;
-        baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
-        accumulatedBreakSeconds = parseInt(localStorage.getItem('accumulatedBreakSeconds')) || 0;
-        isRunning = true;
-        
-        // *** DEĞİŞİKLİK: Interval 100'den 10'a düşürüldü (daha hızlı güncelleme). ***
+      if (isRunning) {
         timer = setInterval(() => {
           const totalSec = getCurrentSeconds();
           const { total: earn } = calculateEarnings(totalSec);
           earnings = earn;
+          
           const todayKey = new Date().toISOString().split('T')[0];
           localStorage.setItem('daily_' + todayKey, earnings);
           localStorage.setItem('dailySeconds_' + todayKey, totalSec);
           localStorage.setItem('earnings', earnings);
+
           updateDisplay();
-          if ((totalSec / 3600) >= goal) checkDailyGoal(totalSec);
-        }, 10);
-      } else {
-        baseSeconds = parseInt(localStorage.getItem('baseSeconds')) || 0;
-        accumulatedBreakSeconds = parseInt(localStorage.getItem('accumulatedBreakSeconds')) || 0;
-        earnings = parseFloat(localStorage.getItem('earnings')) || 0;
-        const todayKey = new Date().toISOString().split('T')[0];
-        const currentSec = parseInt(localStorage.getItem('dailySeconds_' + todayKey)) || 0;
-        updateDisplay();
+        }, 50);
       }
       
-      // İlk görünümde ilerleme çubuğunu güncelle
+      updateDisplay();
       updateProgressBar();
       
-      // Tooltip'ler için başlık ekleme
       document.querySelectorAll('.info-tooltip').forEach(el => {
         const title = el.getAttribute('title');
         if (title) {
           el.removeAttribute('title');
-          el.addEventListener('click', () => {
-            showNotification(title);
-          });
+          el.addEventListener('click', () => { showNotification(title); });
         }
       });
       
-      // Odağı maaş alanına ver
-      salaryInput.focus();
+      if(salaryInput) salaryInput.focus();
     };
     
-    // Klavye kısayolları
     document.addEventListener('keydown', (e) => {
-      // Boşluk tuşu: Başlat/Durdur
-      if (e.key === ' ' && e.target.tagName !== 'INPUT') {
-        if (isRunning) stopTracking();
-        else startTracking();
-        e.preventDefault();
-      }
-      // B tuşu: Mola
-      else if ((e.key === 'b' || e.key === 'B') && e.target.tagName !== 'INPUT') {
-        toggleBreak();
-        e.preventDefault();
-      }
-      // R tuşu: Sıfırla
-      else if ((e.key === 'r' || e.key === 'R') && e.target.tagName !== 'INPUT') {
-        confirmDailyReset();
-        e.preventDefault();
-      }
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === ' ') { isRunning ? stopTracking() : startTracking(); e.preventDefault(); }
+      else if (e.key.toLowerCase() === 'b') { toggleBreak(); e.preventDefault(); }
+      else if (e.key.toLowerCase() === 'r') { confirmDailyReset(); e.preventDefault(); }
     });
   </script>
 </body>
