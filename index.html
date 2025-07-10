@@ -3,40 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Time</title>
+  <title>Business Time Pro</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icon.png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg: #f4f6fc;
-      --text: #1a1a1a;
+      --bg: #f8fafc;
+      --text: #1e293b;
       --box: #ffffff;
-      --accent: #1a73e8;
-      --gold: #d4af37;
-      --work-color: rgba(26, 115, 232, 0.8);
-      --idle-color: rgba(232, 26, 26, 0.8);
-      --earn-color: rgba(26, 232, 26, 0.8);
-      --success: #34a853;
-      --danger: #ea4335;
-      --warning: #ff9800;
-      --info: #fbbc04;
-      --transition: all 0.3s ease;
-      --border-radius: 12px;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --accent: #4f46e5;
+      --gold: #f59e0b;
+      --work-color: rgba(79, 70, 229, 0.8);
+      --idle-color: rgba(239, 68, 68, 0.8);
+      --earn-color: rgba(16, 185, 129, 0.8);
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --border-radius: 16px;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      --card-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     }
     body.dark {
-      --bg: #121212;
-      --text: #f4f4f4;
-      --box: #1e1e1e;
-      --accent: #8ab4f8;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      --bg: #0f172a;
+      --text: #f1f5f9;
+      --box: #1e293b;
+      --accent: #818cf8;
+      --gold: #fbbf24;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      --card-gradient: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
     }
     * { 
       box-sizing: border-box; 
       margin: 0; 
       padding: 0; 
-      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    }
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZg.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYMZg.ttf) format('truetype');
+    }
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
     }
     body {
       background: var(--bg);
@@ -46,6 +71,8 @@
       display: flex;
       flex-direction: column;
       line-height: 1.6;
+      background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.05) 1px, transparent 0);
+      background-size: 20px 20px;
     }
     header {
       display: flex;
@@ -57,10 +84,22 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
     .logo {
       height: 45px;
       transition: var(--transition);
+    }
+    .app-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: var(--card-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
     }
     .profile-info {
       display: flex;
@@ -87,7 +126,7 @@
       overflow-y: auto;
     }
     .input-group {
-      max-width: 600px;
+      max-width: 700px;
       margin: 20px auto;
       position: relative;
     }
@@ -98,14 +137,17 @@
       font-size: 16px;
       color: var(--text);
       opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .input-group input,
     .input-group select {
       width: 100%;
-      padding: 16px;
+      padding: 16px 20px;
       border-radius: var(--border-radius);
       font-size: 16px;
-      border: 1px solid #ddd;
+      border: 1px solid rgba(0,0,0,0.1);
       background: var(--box);
       color: var(--text);
       transition: var(--transition);
@@ -115,7 +157,7 @@
     .input-group select:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
     }
     .time-group {
       display: flex;
@@ -125,7 +167,7 @@
       flex: 1;
     }
     .buttons {
-      max-width: 600px;
+      max-width: 700px;
       margin: 30px auto;
       display: flex;
       flex-wrap: wrap;
@@ -146,16 +188,32 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
     }
-    .buttons button i {
-      font-size: 22px;
+    .buttons button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: -1;
+    }
+    .buttons button:hover::after {
+      opacity: 1;
     }
     .buttons button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
     .buttons button:active {
       transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     .start-btn { 
       background: var(--success); 
@@ -178,21 +236,37 @@
       color: white; 
     }
     .earnings-box {
-      max-width: 600px;
+      max-width: 700px;
       margin: 30px auto;
-      background: var(--box);
+      background: var(--card-gradient);
       font-size: 36px;
       font-weight: 700;
-      padding: 25px;
+      padding: 30px;
       text-align: center;
       border-radius: var(--border-radius);
-      color: var(--gold);
+      color: white;
       box-shadow: var(--shadow);
-      border: 2px solid var(--gold);
       transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .earnings-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+      z-index: -1;
+      opacity: 0.5;
+    }
+    .earnings-box:hover {
+      transform: scale(1.02);
     }
     .earnings-detail {
-      max-width: 600px;
+      max-width: 700px;
       margin: 15px auto;
       font-size: 16px;
       text-align: center;
@@ -204,42 +278,61 @@
     }
     .earnings-detail div {
       background: var(--box);
-      padding: 12px 20px;
+      padding: 15px 20px;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
       flex: 1;
       min-width: 200px;
+      transition: var(--transition);
+      border-left: 4px solid var(--accent);
+    }
+    .earnings-detail div:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
     }
     .summary {
-      max-width: 600px;
+      max-width: 700px;
       margin: 30px auto 50px;
       font-size: 18px;
       text-align: center;
       color: var(--text);
       background: var(--box);
-      padding: 20px;
+      padding: 25px;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
     }
     .remaining {
-      max-width: 600px;
+      max-width: 700px;
       margin: 20px auto;
       font-size: 18px;
       text-align: center;
       color: var(--accent);
       background: var(--box);
-      padding: 15px;
+      padding: 18px;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
       font-weight: 600;
+      border: 1px solid rgba(79, 70, 229, 0.1);
+      transition: var(--transition);
+    }
+    .remaining:hover {
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
     }
     .chart-container {
-      max-width: 600px;
+      max-width: 700px;
       margin: 30px auto;
       background: var(--box);
-      padding: 20px;
+      padding: 25px;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .chart-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
     #earningsChart,
     #workChart,
@@ -252,10 +345,12 @@
       justify-content: space-around;
       background: var(--box);
       padding: 15px 0;
-      border-top: 1px solid #ddd;
+      border-top: 1px solid rgba(0,0,0,0.05);
       position: sticky;
       bottom: 0;
       z-index: 100;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
     .nav button {
       background: none;
@@ -270,16 +365,37 @@
       border-radius: 50px;
       transition: var(--transition);
       cursor: pointer;
+      position: relative;
+    }
+    .nav button::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 3px;
+      background: var(--accent);
+      transition: var(--transition);
+      border-radius: 3px;
     }
     .nav button.active {
-      background: rgba(26, 115, 232, 0.1);
+      color: var(--accent);
+      background: rgba(79, 70, 229, 0.1);
+    }
+    .nav button.active::after {
+      width: 80%;
     }
     .nav button:hover {
-      background: rgba(26, 115, 232, 0.15);
+      background: rgba(79, 70, 229, 0.1);
     }
     .nav-icon {
       font-size: 24px;
       margin-bottom: 5px;
+      transition: var(--transition);
+    }
+    .nav button:hover .nav-icon {
+      transform: scale(1.2);
     }
     .hidden { display: none; }
     .chart-title {
@@ -299,48 +415,68 @@
       padding: 15px 30px;
       border-radius: 50px;
       font-weight: 600;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       z-index: 1000;
       opacity: 0;
       transition: opacity 0.3s, top 0.3s;
       pointer-events: none;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
     .notification.show {
       opacity: 1;
       top: 30px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
     .settings-view {
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
       background: var(--box);
-      padding: 25px;
+      padding: 30px;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .settings-view:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
     .settings-view .input-group {
       margin-bottom: 25px;
     }
     .progress-container {
-      max-width: 600px;
+      max-width: 700px;
       margin: 25px auto;
       background: var(--box);
-      padding: 20px;
+      padding: 25px;
       border-radius: var(--border-radius);
       box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .progress-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
     .progress-bar {
       height: 25px;
-      background: #e0e0e0;
+      background: rgba(0,0,0,0.05);
       border-radius: 12px;
       overflow: hidden;
       margin-top: 10px;
       position: relative;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
     }
     .progress-fill {
       height: 100%;
-      background: var(--accent);
+      background: linear-gradient(90deg, var(--accent), #7c3aed);
       border-radius: 12px;
       transition: width 0.5s ease;
+      box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
     }
     .progress-text {
       position: absolute;
@@ -354,12 +490,15 @@
       font-size: 14px;
       font-weight: 600;
       color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
     .info-tooltip {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       margin-left: 8px;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       background: var(--accent);
       color: white;
@@ -367,53 +506,135 @@
       font-size: 14px;
       line-height: 20px;
       cursor: help;
+      transition: var(--transition);
+    }
+    .info-tooltip:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.2);
     }
     .section-title {
       text-align: center;
-      margin: 30px 0 20px;
+      margin: 30px 0 25px;
       color: var(--accent);
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 700;
+      position: relative;
+      padding-bottom: 15px;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 2px;
     }
     .time-card {
       display: flex;
       justify-content: space-between;
       background: var(--box);
-      padding: 15px;
+      padding: 20px;
       border-radius: var(--border-radius);
-      margin-bottom: 15px;
+      margin-bottom: 0;
       box-shadow: var(--shadow);
+      transition: var(--transition);
+      border-left: 4px solid var(--accent);
+    }
+    .time-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
     }
     .time-card div:first-child {
       font-weight: 600;
       color: var(--text);
       opacity: 0.8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .time-card div:last-child {
       font-weight: 700;
       color: var(--accent);
+      font-size: 1.2em;
     }
+    .card-icon {
+      font-size: 1.4em;
+      color: var(--accent);
+    }
+    .floating-buttons {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 99;
+    }
+    .floating-buttons button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .floating-buttons button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: -1;
+    }
+    .floating-buttons button:hover::after {
+      opacity: 1;
+    }
+    .floating-buttons button:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+    }
+    .floating-start { background: var(--success); color: white; }
+    .floating-stop { background: var(--danger); color: white; }
+    .floating-break { background: var(--warning); color: white; }
     
     @media (max-width: 768px) {
       .buttons button {
-        padding: 15px;
+        padding: 16px;
         font-size: 16px;
       }
       .earnings-box {
         font-size: 28px;
-        padding: 20px;
+        padding: 25px;
       }
       .summary {
         font-size: 16px;
-        padding: 15px;
+        padding: 20px;
       }
       .chart-container {
-        padding: 15px;
+        padding: 20px;
       }
       #earningsChart,
       #workChart,
       #idleChart {
         height: 250px !important;
+      }
+      .section-title {
+        font-size: 24px;
       }
     }
     
@@ -435,6 +656,12 @@
       .nav-icon {
         font-size: 20px;
       }
+      .section-title {
+        font-size: 22px;
+      }
+      .app-title {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -444,7 +671,7 @@
   <header>
     <div class="logo-container">
       <img src="icon.png" class="logo" alt="Business Time Logo" />
-      <h1 style="display: none;">Business Time</h1>
+      <h1 class="app-title">Business Time Pro</h1>
     </div>
     <div class="profile-info">
       <img id="profilePhoto" class="profile-photo" src="" alt="Profil Fotoğrafı" />
@@ -456,22 +683,34 @@
       <h2 class="section-title">İş Takip Paneli</h2>
       
       <div class="input-group">
-        <label for="salary">Maaş Bilgisi (TL) <span class="info-tooltip" title="Aylık brüt maaşınızı girin">?</span></label>
+        <label for="salary">
+          <i class="fas fa-money-bill-wave"></i>
+          Maaş Bilgisi (TL) <span class="info-tooltip" title="Aylık brüt maaşınızı girin">?</span>
+        </label>
         <input type="number" id="salary" placeholder="Aylık maaşınızı girin" min="1" step="100">
       </div>
       
       <div class="input-group">
-        <label for="monthlyLimit">Aylık Çalışma Süresi Limiti (saat) <span class="info-tooltip" title="Tam zamanlı çalışanlar için genelde 180 saattir">?</span></label>
+        <label for="monthlyLimit">
+          <i class="fas fa-calendar-alt"></i>
+          Aylık Çalışma Süresi Limiti (saat) <span class="info-tooltip" title="Tam zamanlı çalışanlar için genelde 180 saattir">?</span>
+        </label>
         <input type="number" id="monthlyLimit" placeholder="Örn: 180" min="1" step="1">
       </div>
       
       <div class="input-group">
-        <label for="dailyGoal">Günlük Hedef (saat) <span class="info-tooltip" title="Günlük çalışmayı hedeflediğiniz saat">?</span></label>
+        <label for="dailyGoal">
+          <i class="fas fa-bullseye"></i>
+          Günlük Hedef (saat) <span class="info-tooltip" title="Günlük çalışmayı hedeflediğiniz saat">?</span>
+        </label>
         <input type="number" id="dailyGoal" placeholder="Örn: 8" min="1" step="0.5">
       </div>
       
       <div class="input-group">
-        <label>Ek Süre <span class="info-tooltip" title="Takip dışı çalıştığınız süreleri ekleyin">?</span></label>
+        <label>
+          <i class="fas fa-clock"></i>
+          Ek Süre <span class="info-tooltip" title="Takip dışı çalıştığınız süreleri ekleyin">?</span>
+        </label>
         <div class="time-group">
           <input type="number" id="extraHours" placeholder="Saat" min="0" step="1">
           <input type="number" id="extraMinutes" placeholder="Dakika" min="0" step="1" max="59">
@@ -480,19 +719,19 @@
       
       <div class="buttons">
         <button class="start-btn" onclick="startTracking()">
-          <i>▶️</i> BAŞLAT
+          <i class="fas fa-play"></i> BAŞLAT
         </button>
         <button class="stop-btn" onclick="stopTracking()">
-          <i>⏹️</i> DURDUR
+          <i class="fas fa-stop"></i> DURDUR
         </button>
         <button class="break-btn" onclick="toggleBreak()" id="breakButton">
-          <i>⏸️</i> MOLA
+          <i class="fas fa-pause"></i> MOLA
         </button>
         <button class="reset-btn" onclick="confirmDailyReset()">
-          <i>🔄</i> SIFIRLA
+          <i class="fas fa-sync-alt"></i> SIFIRLA
         </button>
         <button class="dark-toggle" onclick="toggleDarkMode()">
-          <i>🌙</i> TEMA
+          <i class="fas fa-moon"></i> TEMA
         </button>
       </div>
       
@@ -515,15 +754,15 @@
       
       <div class="summary">
         <div class="time-card">
-          <div>Toplam Süre:</div>
+          <div><i class="fas fa-clock card-icon"></i> Toplam Süre:</div>
           <div id="timeDisplay">0 saat 0 dakika</div>
         </div>
         <div class="time-card">
-          <div>Fazla Mesai:</div>
+          <div><i class="fas fa-tachometer-alt card-icon"></i> Fazla Mesai:</div>
           <div id="overtimeDisplay">0 saat 0 dakika</div>
         </div>
         <div class="time-card">
-          <div>Mola Süresi:</div>
+          <div><i class="fas fa-coffee card-icon"></i> Mola Süresi:</div>
           <div id="breakDisplay">0 saat 0 dakika</div>
         </div>
       </div>
@@ -553,7 +792,10 @@
       
       <div class="settings-view">
         <div class="input-group">
-          <label for="currency">Döviz Cinsi</label>
+          <label for="currency">
+            <i class="fas fa-money-bill"></i>
+            Döviz Cinsi
+          </label>
           <select id="currency">
             <option value="TL">TL</option>
             <option value="USD">USD</option>
@@ -562,17 +804,26 @@
         </div>
         
         <div class="input-group">
-          <label for="exchangeRate">Döviz Kuru (1 birim USD/EUR = ? TL)</label>
+          <label for="exchangeRate">
+            <i class="fas fa-exchange-alt"></i>
+            Döviz Kuru (1 birim USD/EUR = ? TL)
+          </label>
           <input type="number" step="0.01" id="exchangeRate" placeholder="Örn: 32.50">
         </div>
         
         <div class="input-group">
-          <label for="overtimeMultiplier">Fazla Mesai Çarpanı</label>
+          <label for="overtimeMultiplier">
+            <i class="fas fa-bolt"></i>
+            Fazla Mesai Çarpanı
+          </label>
           <input type="number" step="0.1" id="overtimeMultiplier" placeholder="Örn: 1.5 (default)">
         </div>
         
         <div class="input-group">
-          <label for="themeSelect">Tema</label>
+          <label for="themeSelect">
+            <i class="fas fa-palette"></i>
+            Tema
+          </label>
           <select id="themeSelect">
             <option value="auto">Otomatik</option>
             <option value="light">Aydınlık</option>
@@ -582,24 +833,36 @@
         
         <div class="buttons">
           <button class="dark-toggle" onclick="confirmAllReset()" style="flex: 1 1 100%;">
-            <i>⚠️</i> TÜM VERİLERİ SIFIRLA
+            <i class="fas fa-exclamation-triangle"></i> TÜM VERİLERİ SIFIRLA
           </button>
         </div>
       </div>
     </main>
   </div>
 
+  <div class="floating-buttons">
+    <button class="floating-start" onclick="startTracking()">
+      <i class="fas fa-play"></i>
+    </button>
+    <button class="floating-stop" onclick="stopTracking()">
+      <i class="fas fa-stop"></i>
+    </button>
+    <button class="floating-break" onclick="toggleBreak()">
+      <i class="fas fa-pause"></i>
+    </button>
+  </div>
+
   <nav class="nav">
     <button onclick="showView('main')" id="navMain" class="active">
-      <span class="nav-icon">📊</span>
+      <span class="nav-icon"><i class="fas fa-chart-bar"></i></span>
       Takip
     </button>
     <button onclick="showView('profile')" id="navProfile">
-      <span class="nav-icon">📈</span>
+      <span class="nav-icon"><i class="fas fa-chart-line"></i></span>
       İstatistik
     </button>
     <button onclick="showView('settings')" id="navSettings">
-      <span class="nav-icon">⚙️</span>
+      <span class="nav-icon"><i class="fas fa-cog"></i></span>
       Ayarlar
     </button>
   </nav>
@@ -607,7 +870,6 @@
   <script>
     // Değişkenler
     let timer;
-    // *** DEĞİŞİKLİK: Tüm zaman birimleri milisaniyeye çevrildi ***
     let startTimestamp = parseInt(localStorage.getItem('startTimestamp_ms')) || null;
     let baseMilliseconds = parseInt(localStorage.getItem('baseMilliseconds')) || 0;
     let isRunning = localStorage.getItem('isRunning') === 'true';
@@ -739,7 +1001,6 @@
       drawChart();
     });
 
-    // *** DEĞİŞİKLİK: Saniye yerine milisaniye hassasiyetinde saniye döndürür ***
     function getCurrentSeconds() {
         let currentMilliseconds = 0;
         if (isRunning && startTimestamp !== null) {
@@ -755,7 +1016,7 @@
         } else {
             currentMilliseconds = baseMilliseconds - accumulatedBreakMilliseconds;
         }
-        return currentMilliseconds / 1000; // Saniyeye çevir ama ondalıklı kalsın
+        return currentMilliseconds / 1000;
     }
 
     function calculateEarnings(totalSec) {
@@ -831,7 +1092,6 @@
       const eminutes = Math.floor((extraTime % 3600) / 60);
       document.getElementById('overtimeDisplay').innerText = `${ehours} saat ${eminutes} dakika`;
       
-      // *** DEĞİŞİKLİK: Mola süresi milisaniyeden hesaplanıyor ***
       const totalBreakSeconds = accumulatedBreakMilliseconds / 1000;
       const breakHours = Math.floor(totalBreakSeconds / 3600);
       const breakMinutes = Math.floor((totalBreakSeconds % 3600) / 60);
@@ -860,7 +1120,7 @@
       }
       
       const btn = document.getElementById('breakButton');
-      btn.innerHTML = isOnBreak ? '<i>▶️</i> MOLADAN DÖN' : '<i>⏸️</i> MOLA';
+      btn.innerHTML = isOnBreak ? '<i class="fas fa-play"></i> MOLADAN DÖN' : '<i class="fas fa-pause"></i> MOLA';
 
       if (!isRunning && baseMilliseconds === parseInt(localStorage.getItem('baseMilliseconds') || '0')) {
         const extraMs = (((+extraHoursInput.value || 0) * 3600) + ((+extraMinutesInput.value || 0) * 60)) * 1000;
@@ -874,7 +1134,6 @@
 
       showNotification('Çalışma başlatıldı');
 
-      // *** DEĞİŞİKLİK: Zaman damgası milisaniye olarak alınıyor ***
       startTimestamp = Date.now();
       isRunning = true;
       localStorage.setItem('startTimestamp_ms', startTimestamp);
@@ -882,7 +1141,6 @@
 
       updateDisplay();
       
-      // Akıcı güncelleme için interval
       timer = setInterval(() => {
         const totalSec = getCurrentSeconds();
         const { total: earn } = calculateEarnings(totalSec);
@@ -894,7 +1152,7 @@
         localStorage.setItem('earnings', earnings);
 
         updateDisplay();
-      }, 50); // 50ms (saniyede 20 güncelleme) akıcı bir his için yeterlidir.
+      }, 50);
     }
 
     function stopTracking() {
@@ -908,13 +1166,12 @@
         isOnBreak = false;
         localStorage.setItem('isOnBreak', 'false');
         localStorage.removeItem('breakStartTimestamp_ms');
-        document.getElementById('breakButton').innerHTML = '<i>⏸️</i> MOLA';
+        document.getElementById('breakButton').innerHTML = '<i class="fas fa-pause"></i> MOLA';
       }
 
       showNotification('Çalışma durduruldu');
       clearInterval(timer);
       
-      // *** DEĞİŞİKLİK: Kalan süre milisaniye olarak ekleniyor ***
       const elapsed = now - startTimestamp;
       baseMilliseconds += elapsed;
       localStorage.setItem('baseMilliseconds', baseMilliseconds);
@@ -948,7 +1205,7 @@
         breakStartTimestamp = now;
         localStorage.setItem('breakStartTimestamp_ms', breakStartTimestamp);
         localStorage.setItem('isOnBreak', 'true');
-        btn.innerHTML = '<i>▶️</i> MOLADAN DÖN';
+        btn.innerHTML = '<i class="fas fa-play"></i> MOLADAN DÖN';
         showNotification('Mola başlatıldı');
       } else {
         const thisBreak = now - breakStartTimestamp;
@@ -959,7 +1216,7 @@
         localStorage.removeItem('breakStartTimestamp_ms');
         isOnBreak = false;
         localStorage.setItem('isOnBreak', 'false');
-        btn.innerHTML = '<i>⏸️</i> MOLA';
+        btn.innerHTML = '<i class="fas fa-pause"></i> MOLA';
         showNotification('Mola sonlandırıldı');
         updateDisplay();
       }
@@ -1120,7 +1377,7 @@
             label: 'Kazanılan (' + currency + ')',
             data: data,
             borderColor: 'var(--earn-color)',
-            backgroundColor: 'rgba(26, 232, 26, 0.1)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
             borderWidth: 3,
             tension: 0.2,
             fill: true,
@@ -1134,7 +1391,7 @@
     }
 
     window.onload = () => {
-      document.getElementById('breakButton').innerHTML = isOnBreak ? '<i>▶️</i> MOLADAN DÖN' : '<i>⏸️</i> MOLA';
+      document.getElementById('breakButton').innerHTML = isOnBreak ? '<i class="fas fa-play"></i> MOLADAN DÖN' : '<i class="fas fa-pause"></i> MOLA';
 
       if (isRunning) {
         timer = setInterval(() => {
