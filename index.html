@@ -64,29 +64,29 @@
       src: url(https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZg.ttf) format('truetype');
     }
     body {
-      background: var(--bg);
+      background-color: var(--bg);
       color: var(--text);
       transition: var(--transition);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       line-height: 1.6;
-      background-image: radial-gradient(circle at 1px 1px, rgba(0, 0, 0, 0.05) 1px, transparent 0);
-      background-size: 20px 20px;
+      /* --- YENİ ARKA PLAN GÖRSELİ --- */
+      background-image: url('https://i.hizliresim.com/ejtqo3f.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
     }
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 5vw;
-      background: var(--box);
-      box-shadow: var(--shadow);
+      /* --- ÜST BAR DÜZENLEMESİ --- */
+      padding: 20px 5vw; 
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
     .logo {
       height: 45px;
@@ -147,7 +147,7 @@
       padding: 16px 20px;
       border-radius: var(--border-radius);
       font-size: 16px;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
       background: var(--box);
       color: var(--text);
       transition: var(--transition);
@@ -157,7 +157,7 @@
     .input-group select:focus {
       outline: none;
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.4);
     }
     .time-group {
       display: flex;
@@ -183,7 +183,6 @@
       border-radius: var(--border-radius);
       cursor: pointer;
       transition: var(--transition);
-      box-shadow: var(--shadow);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,6 +190,7 @@
       position: relative;
       overflow: hidden;
       z-index: 1;
+      color: white; /* Tüm buton metinleri beyaz */
     }
     .buttons button::after {
       content: '';
@@ -199,7 +199,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.15);
       opacity: 0;
       transition: var(--transition);
       z-index: -1;
@@ -209,43 +209,28 @@
     }
     .buttons button:hover {
       transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
     .buttons button:active {
       transform: translateY(0);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    .start-btn { 
-      background: var(--success); 
-      color: white; 
-    }
-    .stop-btn  { 
-      background: var(--danger); 
-      color: white; 
-    }
-    .break-btn { 
-      background: var(--warning); 
-      color: white; 
-    }
-    .reset-btn { 
-      background: var(--info); 
-      color: white; 
-    }
-    .dark-toggle { 
-      background: var(--accent); 
-      color: white; 
-    }
+    /* Button renkleri glass efektiyle birlikte aşağıda tanımlanacak */
+    .start-btn { background: var(--success); }
+    .stop-btn  { background: var(--danger); }
+    .break-btn { background: var(--warning); }
+    .reset-btn { background: var(--info); }
+    .dark-toggle { background: var(--accent); }
+
     .earnings-box {
       max-width: 700px;
       margin: 30px auto;
-      background: var(--card-gradient);
       font-size: 36px;
       font-weight: 700;
       padding: 30px;
       text-align: center;
       border-radius: var(--border-radius);
       color: white;
-      box-shadow: var(--shadow);
       transition: var(--transition);
       position: relative;
       overflow: hidden;
@@ -277,18 +262,14 @@
       gap: 15px;
     }
     .earnings-detail div {
-      background: var(--box);
       padding: 15px 20px;
       border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
       flex: 1;
       min-width: 200px;
       transition: var(--transition);
-      border-left: 4px solid var(--accent);
     }
     .earnings-detail div:hover {
       transform: translateY(-5px);
-      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
     }
     .summary {
       max-width: 700px;
@@ -296,10 +277,8 @@
       font-size: 18px;
       text-align: center;
       color: var(--text);
-      background: var(--box);
       padding: 25px;
       border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
@@ -310,29 +289,20 @@
       font-size: 18px;
       text-align: center;
       color: var(--accent);
-      background: var(--box);
       padding: 18px;
       border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
       font-weight: 600;
-      border: 1px solid rgba(79, 70, 229, 0.1);
       transition: var(--transition);
-    }
-    .remaining:hover {
-      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
     }
     .chart-container {
       max-width: 700px;
       margin: 30px auto;
-      background: var(--box);
       padding: 25px;
       border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
       transition: var(--transition);
     }
     .chart-container:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
     #earningsChart,
     #workChart,
@@ -343,14 +313,11 @@
     .nav {
       display: flex;
       justify-content: space-around;
-      background: var(--box);
       padding: 15px 0;
-      border-top: 1px solid rgba(0,0,0,0.05);
+      border-top: 1px solid rgba(255,255,255,0.1);
       position: sticky;
       bottom: 0;
       z-index: 100;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
     }
     .nav button {
       background: none;
@@ -381,13 +348,13 @@
     }
     .nav button.active {
       color: var(--accent);
-      background: rgba(79, 70, 229, 0.1);
+      background: rgba(129, 140, 248, 0.2);
     }
     .nav button.active::after {
       width: 80%;
     }
     .nav button:hover {
-      background: rgba(79, 70, 229, 0.1);
+      background: rgba(129, 140, 248, 0.25);
     }
     .nav-icon {
       font-size: 24px;
@@ -436,15 +403,12 @@
     .settings-view {
       max-width: 700px;
       margin: 0 auto;
-      background: var(--box);
       padding: 30px;
       border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
       transition: var(--transition);
     }
     .settings-view:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
     .settings-view .input-group {
       margin-bottom: 25px;
@@ -452,19 +416,16 @@
     .progress-container {
       max-width: 700px;
       margin: 25px auto;
-      background: var(--box);
       padding: 25px;
       border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
       transition: var(--transition);
     }
     .progress-container:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
     }
     .progress-bar {
       height: 25px;
-      background: rgba(0,0,0,0.05);
+      background: rgba(0,0,0,0.2);
       border-radius: 12px;
       overflow: hidden;
       margin-top: 10px;
@@ -473,10 +434,10 @@
     }
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--accent), #7c3aed);
+      background: linear-gradient(90deg, var(--accent), #a78bfa);
       border-radius: 12px;
       transition: width 0.5s ease;
-      box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 0 10px rgba(129, 140, 248, 0.4);
     }
     .progress-text {
       position: absolute;
@@ -510,7 +471,7 @@
     }
     .info-tooltip:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.2);
+      box-shadow: 0 0 0 5px rgba(129, 140, 248, 0.2);
     }
     .section-title {
       text-align: center;
@@ -535,17 +496,13 @@
     .time-card {
       display: flex;
       justify-content: space-between;
-      background: var(--box);
       padding: 20px;
       border-radius: var(--border-radius);
       margin-bottom: 0;
-      box-shadow: var(--shadow);
       transition: var(--transition);
-      border-left: 4px solid var(--accent);
     }
     .time-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
     }
     .time-card div:first-child {
       font-weight: 600;
@@ -566,11 +523,11 @@
     }
     .floating-buttons {
       position: fixed;
-      bottom: 80px;
+      bottom: 100px; /* Nav bar'dan yukarıda */
       right: 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 15px;
       z-index: 99;
     }
     .floating-buttons button {
@@ -581,13 +538,13 @@
       align-items: center;
       justify-content: center;
       font-size: 24px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-      border: none;
       cursor: pointer;
       transition: var(--transition);
       position: relative;
       overflow: hidden;
       z-index: 1;
+      color: white;
+      border: none;
     }
     .floating-buttons button::after {
       content: '';
@@ -596,7 +553,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.15);
       opacity: 0;
       transition: var(--transition);
       z-index: -1;
@@ -606,11 +563,55 @@
     }
     .floating-buttons button:hover {
       transform: translateY(-5px) scale(1.1);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.35);
     }
-    .floating-start { background: var(--success); color: white; }
-    .floating-stop { background: var(--danger); color: white; }
-    .floating-break { background: var(--warning); color: white; }
+    /* Floating button renkleri glass efektiyle aşağıda tanımlanacak */
+    .floating-start { background: var(--success); }
+    .floating-stop { background: var(--danger); }
+    .floating-break { background: var(--warning); }
+    
+    /* --- GLASSMORPHISM / BLUR EFEKTİ STİLLERİ --- */
+    body.dark header,
+    body.dark .input-group input,
+    body.dark .input-group select,
+    body.dark .earnings-detail div,
+    body.dark .summary,
+    body.dark .remaining,
+    body.dark .chart-container,
+    body.dark .nav,
+    body.dark .settings-view,
+    body.dark .progress-container,
+    body.dark .time-card {
+        background: rgba(30, 41, 59, 0.5); /* --box: #1e293b; */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark .earnings-box {
+      background: linear-gradient(135deg, rgba(129, 140, 248, 0.5) 0%, rgba(167, 139, 250, 0.5) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    body.dark .buttons button,
+    body.dark .floating-buttons button {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.3);
+    }
+    
+    /* --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --info: #3b82f6; --accent(dark): #818cf8; */
+    body.dark .start-btn, body.dark .floating-start { background: rgba(16, 185, 129, 0.5); }
+    body.dark .stop-btn, body.dark .floating-stop { background: rgba(239, 68, 68, 0.5); }
+    body.dark .break-btn, body.dark .floating-break { background: rgba(245, 158, 11, 0.5); }
+    body.dark .reset-btn { background: rgba(59, 130, 246, 0.5); }
+    body.dark .dark-toggle, 
+    body.dark .settings-view .dark-toggle { background: rgba(129, 140, 248, 0.5); }
     
     @media (max-width: 768px) {
       .buttons button {
@@ -635,6 +636,9 @@
       }
       .section-title {
         font-size: 24px;
+      }
+      .floating-buttons {
+        bottom: 85px;
       }
     }
     
@@ -665,11 +669,11 @@
     }
   </style>
 </head>
-<body>
+<body class="dark">
   <div class="notification" id="notification">Bildirim Mesajı</div>
   
   <header>
-    <div class="logo-container">
+    <div class="logo-container" style="display: flex; align-items: center; gap: 15px;">
       <img src="icon.png" class="logo" alt="Business Time Logo" />
       <h1 class="app-title">Business Time Pro</h1>
     </div>
@@ -731,7 +735,7 @@
           <i class="fas fa-sync-alt"></i> SIFIRLA
         </button>
         <button class="dark-toggle" onclick="toggleDarkMode()">
-          <i class="fas fa-moon"></i> TEMA
+          <i class="fas fa-palette"></i> TEMA
         </button>
       </div>
       
@@ -745,7 +749,7 @@
       <div class="remaining" id="remainingTime">Aylık limitten kalan süre: 180 saat 0 dakika</div>
       
       <div class="progress-container">
-        <label>Günlük Hedef İlerleme</label>
+        <label style="padding-left: 5px;">Günlük Hedef İlerleme</label>
         <div class="progress-bar">
           <div class="progress-fill" id="dailyProgress" style="width: 0%"></div>
           <div class="progress-text" id="progressText">0%</div>
@@ -832,7 +836,7 @@
         </div>
         
         <div class="buttons">
-          <button class="dark-toggle" onclick="confirmAllReset()" style="flex: 1 1 100%;">
+          <button class="dark-toggle" onclick="confirmAllReset()" style="flex: 1 1 100%; background: rgba(239, 68, 68, 0.6);">
             <i class="fas fa-exclamation-triangle"></i> TÜM VERİLERİ SIFIRLA
           </button>
         </div>
@@ -931,18 +935,27 @@
     currencySelect && (currencySelect.value = currency);
     exchangeRateInput && (exchangeRateInput.value = exchangeRate);
     overtimeInput && (overtimeInput.value = overtimeMultiplier);
-    themeSelect && (themeSelect.value = localStorage.getItem('theme') || 'auto');
+    themeSelect && (themeSelect.value = localStorage.getItem('theme') || 'dark'); // Varsayılan tema dark
     monthlyLimitInput && (monthlyLimitInput.value = monthlyLimit);
 
     // Tema Uygulama
     function applyTheme() {
-      const saved = localStorage.getItem('theme');
-      if (saved === 'light') document.body.classList.remove('dark');
-      else if (saved === 'dark') document.body.classList.add('dark');
-      else {
+      const savedTheme = localStorage.getItem('theme') || 'dark'; // Varsayılan tema dark
+      if (savedTheme === 'light') {
+        document.body.classList.remove('dark');
+      } else if (savedTheme === 'dark') {
+        document.body.classList.add('dark');
+      } else { // Otomatik mod
         const hour = new Date().getHours();
-        if (hour >= 19 || hour < 6) document.body.classList.add('dark');
-        else document.body.classList.remove('dark');
+        if (hour >= 19 || hour < 6) {
+          document.body.classList.add('dark');
+        } else {
+          document.body.classList.remove('dark');
+        }
+      }
+      // Grafikleri yeniden çiz
+      if (typeof drawAllCharts === 'function' && !document.getElementById('profileView').classList.contains('hidden')) {
+        setTimeout(drawAllCharts, 50); // CSS geçişinin tamamlanması için küçük bir gecikme
       }
     }
     themeSelect && (themeSelect.onchange = () => {
@@ -974,13 +987,13 @@
     currencySelect    && (currencySelect.onchange     = () => {
       currency = currencySelect.value;
       localStorage.setItem('currency', currency);
-      drawChart();
+      drawAllCharts();
       updateDisplay();
     });
     exchangeRateInput && (exchangeRateInput.onchange  = () => {
       exchangeRate = parseFloat(exchangeRateInput.value) || 1;
       localStorage.setItem('exchangeRate', exchangeRate);
-      drawChart();
+      drawAllCharts();
       updateDisplay();
     });
     overtimeInput     && (overtimeInput.onchange      = () => {
@@ -998,7 +1011,7 @@
       monthlyLimit = val;
       localStorage.setItem('monthlyLimit', monthlyLimit);
       updateDisplay();
-      drawChart();
+      drawAllCharts();
     });
 
     function getCurrentSeconds() {
@@ -1054,9 +1067,11 @@
     function updateProgressBar() {
       const totalSec = getCurrentSeconds();
       const hoursWorked = totalSec / 3600;
-      const progress = Math.min((hoursWorked / goal) * 100, 100);
-      document.getElementById('dailyProgress').style.width = `${progress}%`;
-      document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
+      if (goal > 0) {
+        const progress = Math.min((hoursWorked / goal) * 100, 100);
+        document.getElementById('dailyProgress').style.width = `${progress}%`;
+        document.getElementById('progressText').textContent = `${Math.round(progress)}%`;
+      }
     }
 
     function updateDisplay() {
@@ -1092,7 +1107,7 @@
       const eminutes = Math.floor((extraTime % 3600) / 60);
       document.getElementById('overtimeDisplay').innerText = `${ehours} saat ${eminutes} dakika`;
       
-      const totalBreakSeconds = accumulatedBreakMilliseconds / 1000;
+      const totalBreakSeconds = accumulatedBreakMilliseconds / 1000 + (isOnBreak && breakStartTimestamp ? (Date.now() - breakStartTimestamp) / 1000 : 0);
       const breakHours = Math.floor(totalBreakSeconds / 3600);
       const breakMinutes = Math.floor((totalBreakSeconds % 3600) / 60);
       document.getElementById('breakDisplay').innerText = `${breakHours} saat ${breakMinutes} dakika`;
@@ -1266,10 +1281,14 @@
     }
 
     function toggleDarkMode() {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-      showNotification(document.body.classList.contains('dark') ? 'Koyu tema etkin' : 'Açık tema etkin');
+        const currentTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        themeSelect.value = newTheme;
+        applyTheme();
+        showNotification(newTheme === 'dark' ? 'Koyu tema etkin' : 'Aydınlık tema etkin');
     }
+
 
     function showView(view) {
       document.getElementById('mainView').classList.add('hidden');
@@ -1282,18 +1301,36 @@
       document.getElementById('navSettings').classList.remove('active');
       document.getElementById('nav' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
       
-      if (view === 'profile') drawAllCharts();
+      if (view === 'profile') {
+        setTimeout(drawAllCharts, 50); // Görünüm değişikliğinden sonra çiz
+      }
     }
 
     let workChart, idleChart, earnChart;
     function drawAllCharts() {
+      if(document.getElementById('profileView').classList.contains('hidden')) return;
       drawWorkChart();
       drawIdleChart();
       drawEarnChart();
     }
 
+    function getChartColors() {
+        const isDark = document.body.classList.contains('dark');
+        return {
+            textColor: isDark ? '#f1f5f9' : '#1e293b',
+            workColor: isDark ? 'rgba(129, 140, 248, 0.8)' : 'rgba(79, 70, 229, 0.8)',
+            workBorder: isDark ? '#818cf8' : '#4f46e5',
+            idleColor: 'rgba(239, 68, 68, 0.7)',
+            idleBorder: '#ef4444',
+            earnColor: 'rgba(16, 185, 129, 0.7)',
+            earnFill: 'rgba(16, 185, 129, 0.2)',
+            earnPoint: '#10b981'
+        };
+    }
+
     function drawWorkChart() {
       const ctx = document.getElementById('workChart').getContext('2d');
+      const colors = getChartColors();
       const labels = [];
       const data = [];
       const today = new Date();
@@ -1313,18 +1350,19 @@
           datasets: [{
             label: 'Çalışılan Saat',
             data: data,
-            backgroundColor: 'var(--work-color)',
-            borderColor: 'var(--accent)',
+            backgroundColor: colors.workColor,
+            borderColor: colors.workBorder,
             borderWidth: 1,
             borderRadius: 5,
           }]
         },
-        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: 'var(--text)' } }, x: { ticks: { color: 'var(--text)' } } }, plugins: { legend: { labels: { color: 'var(--text)' } } } }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { color: colors.textColor } }, x: { ticks: { color: colors.textColor } } }, plugins: { legend: { labels: { color: colors.textColor } } } }
       });
     }
 
     function drawIdleChart() {
       const ctx = document.getElementById('idleChart').getContext('2d');
+      const colors = getChartColors();
       const labels = [];
       const data = [];
       const today = new Date();
@@ -1346,18 +1384,19 @@
           datasets: [{
             label: 'Boşta Kalan Saat',
             data: data,
-            backgroundColor: 'var(--idle-color)',
-            borderColor: 'var(--danger)',
+            backgroundColor: colors.idleColor,
+            borderColor: colors.idleBorder,
             borderWidth: 1,
             borderRadius: 5,
           }]
         },
-        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: 'var(--text)' } }, x: { ticks: { color: 'var(--text)' } } }, plugins: { legend: { labels: { color: 'var(--text)' } } } }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { color: colors.textColor } }, x: { ticks: { color: colors.textColor } } }, plugins: { legend: { labels: { color: colors.textColor } } } }
       });
     }
     
     function drawEarnChart() {
       const ctx = document.getElementById('earningsChart').getContext('2d');
+      const colors = getChartColors();
       const labels = [];
       const data = [];
       const today = new Date();
@@ -1376,17 +1415,17 @@
           datasets: [{
             label: 'Kazanılan (' + currency + ')',
             data: data,
-            borderColor: 'var(--earn-color)',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderColor: colors.earnColor,
+            backgroundColor: colors.earnFill,
             borderWidth: 3,
             tension: 0.2,
             fill: true,
-            pointBackgroundColor: 'var(--success)',
+            pointBackgroundColor: colors.earnPoint,
             pointRadius: 5,
             pointHoverRadius: 8
           }]
         },
-        options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { color: 'var(--text)' } }, x: { ticks: { color: 'var(--text)' } } }, plugins: { legend: { labels: { color: 'var(--text)' } } } }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { color: colors.textColor } }, x: { ticks: { color: colors.textColor } } }, plugins: { legend: { labels: { color: colors.textColor } } } }
       });
     }
 
@@ -1423,10 +1462,20 @@
     };
     
     document.addEventListener('keydown', (e) => {
-      if (e.target.tagName === 'INPUT') return;
-      if (e.key === ' ') { isRunning ? stopTracking() : startTracking(); e.preventDefault(); }
-      else if (e.key.toLowerCase() === 'b') { toggleBreak(); e.preventDefault(); }
-      else if (e.key.toLowerCase() === 'r') { confirmDailyReset(); e.preventDefault(); }
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      
+      if (e.key === ' ' || e.code === 'Space') { 
+        e.preventDefault();
+        isRunning ? stopTracking() : startTracking(); 
+      }
+      else if (e.key.toLowerCase() === 'b') { 
+        e.preventDefault();
+        toggleBreak(); 
+      }
+      else if (e.key.toLowerCase() === 'r') { 
+        e.preventDefault();
+        confirmDailyReset(); 
+      }
     });
   </script>
 </body>
